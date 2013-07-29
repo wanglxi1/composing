@@ -1,6 +1,7 @@
 package com.teddytailor.research.compostion.aima.data;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,13 +64,43 @@ public class Model implements Serializable {
 	/**
 	 * 是否相交
 	 * 
-	 * @param p
+	 * 思路：首先把两个多边形近似成矩形，然后取相交的矩形区域，下一步是扫描此区域的每一行是否有重合的边缘点
+	 * 
+	 * @param model
+	 * @param offset
 	 * @return
 	 */
 	public boolean intersect(Model model, Point offset) {
+		Rectangle r1 = new Rectangle(this.getWidth(), this.getHeight());
+		Rectangle r2 = new Rectangle(offset.x, offset.y, model.getWidth(), model.getHeight());
 		
+		Rectangle ir = r1.intersection(r2);
+		if(ir.isEmpty()) return false;
 		
-		return false;
+		if(ir.width>=r1.width || ir.width>=r2.width 
+				|| ir.height>=r1.height || ir.height>=r2.height
+		) {
+			return true;
+		}
+		
+		boolean intersect = false;
+		for(int y=ir.y,ymax=ir.y+ir.height; y<ymax; y++) {
+			List<Integer> xs2 = model.yX.get(y-offset.y);
+			List<Integer> xs1 = this.yX.get(y);
+			
+			for(int x: xs2) {
+				int ox = x + offset.x;
+				if(ox>=ir.x && ox<=ir.getMaxX()) {
+					
+					if(xs1.contains(ox)) {
+						intersect = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		return intersect;
 	}
 	
 	public Set<Point> fillPoint(){
