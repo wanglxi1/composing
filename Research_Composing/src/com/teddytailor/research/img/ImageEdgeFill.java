@@ -87,7 +87,7 @@ public class ImageEdgeFill {
 		
 		boolean isDingDian = preCount==0 || nextCount==0;
 		if(!isDingDian) {
-			if(Math.abs(nextCount*nextCount - preCount*preCount) >= 142) {
+			if(Math.abs(nextCount*nextCount - preCount*preCount) >= 142) { //142 = (6+6)^2 - (1+1)^2 ，主要是为了解决顶点所附着在一条边上的情况
 				isDingDian = true;
 			}
 		}
