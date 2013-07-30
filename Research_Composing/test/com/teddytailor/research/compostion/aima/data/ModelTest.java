@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.Set;
 
 import org.junit.Assert;
-import org.junit.Test;
 
 import com.teddytailor.research.ocr.util.ImageFrame;
 import com.teddytailor.research.ocr.util.ImageFrame.ImageProcessHandler;
