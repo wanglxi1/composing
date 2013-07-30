@@ -22,7 +22,7 @@ public class ModelTest {
 		new ImageFrame(new ImageProcessHandler() {
 			@Override
 			public Image process(File f) throws Exception {
-				Model m = ModelFactory.read(f).reversal();
+				Model m = ModelFactory.readImg(f).reversal();
 				Set<Point> ps = m.fillPoint();
 				
 				
@@ -42,8 +42,8 @@ public class ModelTest {
 		File f1 = new File(p, "鼻梁_1.jpg");
 		File f2 = new File(p, "尾巴_1.bmp");
 		
-		Model m1 = ModelFactory.read(f1);
-		Model m2 = ModelFactory.read(f2);
+		Model m1 = ModelFactory.readImg(f1);
+		Model m2 = ModelFactory.readImg(f2);
 		
 		//肯定相交
 		Point offset1 = new Point(0, 0);

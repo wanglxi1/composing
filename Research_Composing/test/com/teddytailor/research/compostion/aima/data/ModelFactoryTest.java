@@ -19,7 +19,7 @@ public class ModelFactoryTest {
 		new ImageFrame(new ImageProcessHandler() {
 			@Override
 			public Image process(File f) throws Exception {
-				Model m = ModelFactory.read(f);
+				Model m = ModelFactory.readImg(f);
 				Set<Point> ps = m.fillPoint();
 				
 				
