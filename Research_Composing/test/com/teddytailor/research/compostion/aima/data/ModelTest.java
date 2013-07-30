@@ -1,14 +1,43 @@
 package com.teddytailor.research.compostion.aima.data;
 
+import java.awt.Color;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.teddytailor.research.ocr.util.ImageFrame;
+import com.teddytailor.research.ocr.util.ImageFrame.ImageProcessHandler;
+
 public class ModelTest {
 	
-	@Test
+	public static void main(String[] args) throws Exception {
+		testReversal();
+	}
+	
+	public static void testReversal() throws Exception{
+		new ImageFrame(new ImageProcessHandler() {
+			@Override
+			public Image process(File f) throws Exception {
+				Model m = ModelFactory.read(f).reversal();
+				Set<Point> ps = m.fillPoint();
+				
+				
+				BufferedImage im = new BufferedImage(m.getWidth(), m.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
+				for(Point p: ps) {
+					im.setRGB(p.x, p.y, Color.WHITE.getRGB());
+				}
+				return im;
+			}
+		});
+	}
+	
+	
+	
 	public void testIntersect() throws Exception{
 		File p = new File("E:\\learn\\技术资料\\排板材料备份\\单件\\edge");
 		File f1 = new File(p, "鼻梁_1.jpg");
