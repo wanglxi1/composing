@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 
 public class ModelFactory {
 
-	private final static File RESOURCE = new File(new File(ClassLoader.getSystemResource(".").getFile()).getParentFile(), "resource");
+	public final static File RESOURCE = new File(new File(ClassLoader.getSystemResource(".").getFile()).getParentFile(), "resource");
 	
 	public static void main(String[] args) throws Exception{
 		File src = new File(RESOURCE, "img");

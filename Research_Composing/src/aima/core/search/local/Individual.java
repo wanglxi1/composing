@@ -18,6 +18,8 @@ import java.util.List;
  *            terms of how a problem can be encoded).
  */
 public class Individual<A> {
+	public double score = Double.NEGATIVE_INFINITY;
+	
 	private List<A> representation = new ArrayList<A>();
 
 	/**
