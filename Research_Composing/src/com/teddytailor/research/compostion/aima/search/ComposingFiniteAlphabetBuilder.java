@@ -1,11 +1,9 @@
 package com.teddytailor.research.compostion.aima.search;
 
-import java.awt.Point;
 import java.util.Random;
 
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
 import com.teddytailor.research.compostion.aima.data.ComposingModel;
-import com.teddytailor.research.compostion.aima.data.Model;
 
 public class ComposingFiniteAlphabetBuilder implements FiniteAlphabetBuilder<ComposingModel> {
 
@@ -19,20 +17,18 @@ public class ComposingFiniteAlphabetBuilder implements FiniteAlphabetBuilder<Com
 	
 	@Override
 	public ComposingModel build(ComposingModel origin) {
-		ComposingModel newCM = new ComposingModel(origin.getOriginModel());
-		newCM.pos = randomPos(origin);
-		newCM.reversal = random.nextBoolean();
-		return newCM;
+		origin.reversal = random.nextBoolean();
+		origin.order = random.nextFloat();
+		
+		int yDist = board.height - origin.getCurModel().getHeight();
+		if(yDist == 0) {
+			origin.pos.y = 0;
+		}else {
+			origin.pos.y = random.nextInt(yDist);
+		}
+		
+		return origin;
 	}
 	
-	private Point randomPos(ComposingModel origin) {
-		Model m = origin.getCurModel();
-		
-		Point p = origin.pos;
-		Point np = new Point();
-		np.x = random.nextInt(board.getWidth()-m.getWidth());
-		np.y = Math.abs(random.nextInt(m.getHeight()) - p.y);
-		return np;
-	}
 	
 }

@@ -58,7 +58,7 @@ public class GeneticAlgorithm<A> {
 	// function GENETIC-ALGORITHM(population, FITNESS-FN) returns an individual
 	// inputs: population, a set of individuals
 	// FITNESS-FN, a function that measures the fitness of an individual
-	public Individual<A> geneticAlgorithm(Set<Individual<A>> population, FitnessFunction<A> fitnessFn, GoalTest goalTest) {
+	public Individual<A> geneticAlgorithm(Set<Individual<A>> population, FitnessFunction<A> fitnessFn, GoalTest goalTest, long maxTimeMilliseconds) {
 		Individual<A> bestIndividual = null;
 
 		// Create a local copy of the population to work with
@@ -68,7 +68,7 @@ public class GeneticAlgorithm<A> {
 		clearInstrumentation();
 		setPopulationSize(population.size());
 
-//		long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 
 		// repeat
 		int cnt = 0;
@@ -77,11 +77,11 @@ public class GeneticAlgorithm<A> {
 			cnt++;
 
 			// until some individual is fit enough, or enough time has elapsed
-//			if (maxTimeMilliseconds > 0L) {
-//				if ((System.currentTimeMillis() - startTime) > maxTimeMilliseconds) {
-//					break;
-//				}
-//			}
+			if (maxTimeMilliseconds > 0L) {
+				if ((System.currentTimeMillis() - startTime) > maxTimeMilliseconds) {
+					break;
+				}
+			}
 		} while (!goalTest.isGoalState(bestIndividual));
 		setIterations(cnt);
 //		setTimeInMilliseconds(System.currentTimeMillis() - startTime);

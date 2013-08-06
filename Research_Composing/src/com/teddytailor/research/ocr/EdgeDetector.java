@@ -14,6 +14,10 @@ import com.teddytailor.research.ocr.util.ImageFrame;
 import com.teddytailor.research.ocr.util.ImageFrame.ImageProcessHandler;
 
 public class EdgeDetector extends Component {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	final float ORIENT_SCALE = 40F;
 	private int height;
 	private int width;
@@ -85,8 +89,8 @@ public class EdgeDetector extends Component {
 	}
 
 	private void canny_core(float f, int i) {
-		boolean flag = false;
-		boolean flag1 = false;
+//		boolean flag = false;
+//		boolean flag1 = false;
 		derivative_mag = new int[picsize];
 		float af4[] = new float[i];
 		float af5[] = new float[i];

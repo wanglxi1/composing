@@ -6,17 +6,17 @@ import java.util.Map;
 
 public class ComposingModel {
 	
-	public String name;
-	public Point pos;
-	public boolean reversal;
+	public boolean out = true;
+	
+	public float order = 0;
+	public String name = null;
+	public Point pos = new Point(0, 0);
+	public boolean reversal = false;
 	
 	private Map<Boolean, Model> modelMap;
 	
 	
 	public ComposingModel(Model m) {
-		this.pos = new Point(0, 0);
-		this.reversal = false;
-		
 		this.modelMap = new HashMap<Boolean, Model>();
 		this.modelMap.put(false, m);
 		this.modelMap.put(true, m.reversal());
@@ -34,5 +34,10 @@ public class ComposingModel {
 	
 	public Model getOriginModel() {
 		return this.modelMap.get(false);
+	}
+
+	@Override
+	public int hashCode() {
+		return Boolean.valueOf(reversal).hashCode() + this.getOriginModel().hashCode()*2 + pos.hashCode()*32;
 	}
 }

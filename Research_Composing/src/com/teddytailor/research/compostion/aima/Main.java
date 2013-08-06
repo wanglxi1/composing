@@ -16,26 +16,28 @@ import com.teddytailor.research.compostion.aima.data.ModelFactory;
 import com.teddytailor.research.compostion.aima.search.ComposingFiniteAlphabetBuilder;
 import com.teddytailor.research.compostion.aima.search.ComposingFitnessFunction;
 import com.teddytailor.research.compostion.aima.search.ComposingGoalTest;
-import com.teddytailor.research.compostion.aima.search.FiniteAlphabetBuilder;
 import com.teddytailor.research.compostion.aima.search.GeneticAlgorithm;
 import com.teddytailor.research.ocr.util.ImageFrame;
 
 public class Main {
 
-	public static int COMPOSING_BOARD = 0;
+	public static int COMPOSING_BOARD_WIDTH = 0;
+	public static int COMPOSING_BOARD_HEIGHT = 0;
+	
 	
 	/**
 	 * @param args
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		long maxTimeMilliseconds = 1000L * 60;
-		double mutationProbability = 0.5;
+		long maxTimeMilliseconds = -1;//1000L * 60;
+		double mutationProbability = 0.33;
 		
 		List<ComposingModel> models = buildModels(new File(ModelFactory.RESOURCE, "dat"));
 		int modelLen = models.size();
 		
-		ComposingBoard board = new ComposingBoard(COMPOSING_BOARD);
+		ComposingBoard board = new ComposingBoard(COMPOSING_BOARD_WIDTH+1);
+		board.height = COMPOSING_BOARD_HEIGHT+1;
 		
 		ComposingFiniteAlphabetBuilder finiteAlphabetBuilder = new ComposingFiniteAlphabetBuilder(board);
 		ComposingFitnessFunction fitnessFunction = new ComposingFitnessFunction(board);
@@ -43,7 +45,7 @@ public class Main {
 		
 		
 		Set<Individual<ComposingModel>> population = new HashSet<Individual<ComposingModel>>();
-		for(int i=0; i<100; i++) {
+		for(int i=0; i<1000; i++) {
 			List<ComposingModel> ls = new ArrayList<ComposingModel>(modelLen);
 			for(ComposingModel m: models) {
 				ls.add(finiteAlphabetBuilder.build(m));
@@ -55,7 +57,7 @@ public class Main {
 		GeneticAlgorithm<ComposingModel> ga = new GeneticAlgorithm<ComposingModel>(modelLen, finiteAlphabetBuilder, mutationProbability);
 		
 		// Run for a set amount of time
-		Individual<ComposingModel> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest);
+		Individual<ComposingModel> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest, maxTimeMilliseconds);
 	
 		ImageFrame frame = new ImageFrame();
 		frame.show(board.draw(bestIndividual));
@@ -76,7 +78,7 @@ public class Main {
 			int num = Integer.valueOf(numStr);
 			
 			if("鼻梁".equals(modelName)) {
-				COMPOSING_BOARD = m.getHeight() * 144 / 5;
+				COMPOSING_BOARD_WIDTH = m.getHeight() * 144 / 5;
 			}
 			
 			for(int i=0; i<num; i++) {
@@ -84,6 +86,8 @@ public class Main {
 				cm.name = modelName;
 				models.add(cm);
 			}
+			
+			COMPOSING_BOARD_HEIGHT = Math.max(COMPOSING_BOARD_HEIGHT, m.getHeight());
 		}
 		
 		return models;
