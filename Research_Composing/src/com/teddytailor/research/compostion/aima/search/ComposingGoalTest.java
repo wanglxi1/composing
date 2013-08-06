@@ -10,9 +10,6 @@ public class ComposingGoalTest implements GoalTest {
 	@Override
 	public boolean isGoalState(Object state) {
 		Individual<ComposingModel> im = (Individual<ComposingModel>)state;
-		
-		System.out.println(im.score);
-		
 		return im.score >= 0;
 	}
 

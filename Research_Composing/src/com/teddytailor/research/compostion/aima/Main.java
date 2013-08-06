@@ -1,10 +1,13 @@
 package com.teddytailor.research.compostion.aima;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import aima.core.search.framework.GoalTest;
 import aima.core.search.local.Individual;
@@ -17,7 +20,6 @@ import com.teddytailor.research.compostion.aima.search.ComposingFiniteAlphabetBu
 import com.teddytailor.research.compostion.aima.search.ComposingFitnessFunction;
 import com.teddytailor.research.compostion.aima.search.ComposingGoalTest;
 import com.teddytailor.research.compostion.aima.search.GeneticAlgorithm;
-import com.teddytailor.research.ocr.util.ImageFrame;
 
 public class Main {
 
@@ -30,13 +32,16 @@ public class Main {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		long maxTimeMilliseconds = -1;//1000L * 60;
+		long maxTimeMilliseconds = 0;
+		maxTimeMilliseconds = 1000L * 60;
+		
 		double mutationProbability = 0.33;
+		int population_len = 100;
 		
 		List<ComposingModel> models = buildModels(new File(ModelFactory.RESOURCE, "dat"));
 		int modelLen = models.size();
 		
-		ComposingBoard board = new ComposingBoard(COMPOSING_BOARD_WIDTH+1);
+		final ComposingBoard board = new ComposingBoard(COMPOSING_BOARD_WIDTH+1);
 		board.height = COMPOSING_BOARD_HEIGHT+1;
 		
 		ComposingFiniteAlphabetBuilder finiteAlphabetBuilder = new ComposingFiniteAlphabetBuilder(board);
@@ -44,8 +49,13 @@ public class Main {
 		GoalTest goalTest = new ComposingGoalTest();
 		
 		
+//		Set<Individual<ComposingModel>>[] populations = new Set[ThreadGeneticAlgorithm.THREAD_SIZE];
+//		for(int j=0,jmax=populations.length; j<jmax; j++) {
+//			populations[j] = population;
+//		}
+		
 		Set<Individual<ComposingModel>> population = new HashSet<Individual<ComposingModel>>();
-		for(int i=0; i<1000; i++) {
+		for(int i=0; i<population_len; i++) {
 			List<ComposingModel> ls = new ArrayList<ComposingModel>(modelLen);
 			for(ComposingModel m: models) {
 				ls.add(finiteAlphabetBuilder.build(m));
@@ -55,12 +65,32 @@ public class Main {
 		
 		
 		GeneticAlgorithm<ComposingModel> ga = new GeneticAlgorithm<ComposingModel>(modelLen, finiteAlphabetBuilder, mutationProbability);
-		
 		// Run for a set amount of time
 		Individual<ComposingModel> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest, maxTimeMilliseconds);
 	
-		ImageFrame frame = new ImageFrame();
-		frame.show(board.draw(bestIndividual));
+		BufferedImage img = board.draw(bestIndividual);
+//		new ImageFrame().show(img);
+		ImageIO.write(img, "jpg", new File("E:\\best_"+Double.valueOf(bestIndividual.score).intValue()+".bmp"));
+		
+		
+		
+		//经验证，使用多线程后，效率反而降低，可能是伪双核的原因
+		
+//		ThreadGoalTest.goalCallBack = new Runnable() {
+//			@Override
+//			public void run() {
+//				Individual best = ThreadGoalTest.best;
+//				BufferedImage img = board.draw(best);
+//				try {
+//					ImageIO.write(img, "jpg", new File("E:\\best_"+Double.valueOf(best.score).intValue()+".bmp"));
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		};
+//		
+//		ThreadGeneticAlgorithm<ComposingModel> ga = new ThreadGeneticAlgorithm<ComposingModel>(modelLen, finiteAlphabetBuilder, mutationProbability);
+//		ga.geneticAlgorithm(populations, fitnessFunction, goalTest, maxTimeMilliseconds);
 	}
 	
 	

@@ -17,7 +17,7 @@ public class ComposingFitnessFunction implements FitnessFunction<ComposingModel>
 
 	private ComposingBoard board;
 	
-	private Map<List<ComposingModel>, Integer> valueCache = new HashMap<List<ComposingModel>, Integer>();
+	private Map<List<ComposingModel>, Integer> valueCache = new HashMap<List<ComposingModel>, Integer>();//ConcurrentHashMap
 	
 	public ComposingFitnessFunction(ComposingBoard board) {
 		this.board = board;
@@ -32,9 +32,10 @@ public class ComposingFitnessFunction implements FitnessFunction<ComposingModel>
 	public double getValue(Individual<ComposingModel> individual) {
 		List<ComposingModel> cms = new ArrayList(individual.getRepresentation());
 		Collections.sort(cms, this);
-		
-		if(valueCache.containsKey(cms)) {
-			return valueCache.get(cms);
+			
+		Integer value = valueCache.get(cms);
+		if(value != null) {
+			return value;
 		}
 		
 		int boardWidth = this.board.getWidth();
