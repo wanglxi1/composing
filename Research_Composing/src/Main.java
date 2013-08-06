@@ -1,4 +1,3 @@
-package com.teddytailor.research.compostion.aima;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

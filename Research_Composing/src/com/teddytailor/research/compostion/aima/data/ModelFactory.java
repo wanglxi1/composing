@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,17 @@ import javax.imageio.ImageIO;
 
 public class ModelFactory {
 
-	public final static File RESOURCE = new File(new File(ClassLoader.getSystemResource(".").getFile()).getParentFile(), "resource");
+	public static File RESOURCE = null;
+	static {
+		URL url = ClassLoader.getSystemResource("");
+		if(url == null) {
+			url = ClassLoader.getSystemResource("Main.class");
+			RESOURCE = new File(url.getFile().substring("file:\\".length())).getParentFile().getParentFile();
+			RESOURCE = new File(RESOURCE, "resource");
+		}else {
+			RESOURCE = new File(new File(url.getFile()).getParentFile(), "resource");
+		}
+	}
 	
 	public static void main(String[] args) throws Exception{
 		File src = new File(RESOURCE, "img");
