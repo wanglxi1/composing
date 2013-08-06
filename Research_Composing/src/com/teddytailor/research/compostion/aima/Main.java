@@ -33,7 +33,7 @@ public class Main {
 	 */
 	public static void main(String[] args) throws Exception {
 		long maxTimeMilliseconds = 0;
-		maxTimeMilliseconds = 1000L * 60;
+//		maxTimeMilliseconds = 1000L * 60;
 		
 		double mutationProbability = 0.33;
 		int population_len = 100;
@@ -70,7 +70,7 @@ public class Main {
 	
 		BufferedImage img = board.draw(bestIndividual);
 //		new ImageFrame().show(img);
-		ImageIO.write(img, "jpg", new File("E:\\best_"+Double.valueOf(bestIndividual.score).intValue()+".bmp"));
+		ImageIO.write(img, "jpg", new File("E:\\best_"+Double.valueOf(bestIndividual.score).intValue()+".jpg"));
 		
 		
 		

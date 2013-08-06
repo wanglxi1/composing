@@ -78,11 +78,6 @@ public class Model implements Serializable {
 		Rectangle ir = r1.intersection(r2);
 		if(ir.isEmpty()) return false;
 		
-		if(ir.width>=r1.width || ir.width>=r2.width 
-				|| ir.height>=r1.height || ir.height>=r2.height
-		) {
-			return true;
-		}
 		
 		boolean intersect = false;
 		for(int y=ir.y,ymax=ir.y+ir.height; y<ymax; y++) {
