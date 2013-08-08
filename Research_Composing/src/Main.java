@@ -34,8 +34,8 @@ public class Main {
 		long maxTimeMilliseconds = 0;
 //		maxTimeMilliseconds = 1000L * 60;
 		
-		double mutationProbability = 0.33;
-		int population_len = 100;
+		double mutationProbability = 0.5;
+		int population_len = 500;
 		
 		List<ComposingModel> models = buildModels(new File(ModelFactory.RESOURCE, "dat"));
 		int modelLen = models.size();
