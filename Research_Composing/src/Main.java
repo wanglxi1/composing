@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
-import aima.core.search.framework.GoalTest;
 import aima.core.search.local.Individual;
 
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
@@ -34,8 +33,8 @@ public class Main {
 		long maxTimeMilliseconds = 0;
 //		maxTimeMilliseconds = 1000L * 60;
 		
-		double mutationProbability = 0.5;
-		int population_len = 500;
+		double mutationProbability = 0.9;
+		int population_len = 100;
 		
 		List<ComposingModel> models = buildModels(new File(ModelFactory.RESOURCE, "dat"));
 		int modelLen = models.size();
@@ -45,7 +44,7 @@ public class Main {
 		
 		ComposingFiniteAlphabetBuilder finiteAlphabetBuilder = new ComposingFiniteAlphabetBuilder(board);
 		ComposingFitnessFunction fitnessFunction = new ComposingFitnessFunction(board);
-		GoalTest goalTest = new ComposingGoalTest();
+		ComposingGoalTest goalTest = new ComposingGoalTest();
 		
 		
 //		Set<Individual<ComposingModel>>[] populations = new Set[ThreadGeneticAlgorithm.THREAD_SIZE];
@@ -67,6 +66,8 @@ public class Main {
 		// Run for a set amount of time
 		Individual<ComposingModel> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest, maxTimeMilliseconds);
 	
+		bestIndividual = goalTest.best;
+		
 		BufferedImage img = board.draw(bestIndividual);
 //		new ImageFrame().show(img);
 		ImageIO.write(img, "jpg", new File("E:\\best_"+Double.valueOf(bestIndividual.score).intValue()+".jpg"));
