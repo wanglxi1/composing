@@ -17,31 +17,58 @@ public class OrderDownTest {
 	
 	public static void main(String[] args) throws Exception{
 		test();
+//		testIntersect();
 	}
 	
+	
+	public static void testIntersect() throws Exception{
+		File parent = new File(ModelFactory.RESOURCE, "dat");
+		
+		ComposingModel o1 = new ComposingModel(ModelFactory.readData(new File(parent, "身体_右_1.dat")));
+		o1.reversal = true;
+		
+		ComposingModel o2 = new ComposingModel(ModelFactory.readData(new File(parent, "内胳_右_1.dat")));
+		
+		
+		List<ComposingModel> cms = new ArrayList<ComposingModel>();
+		cms.add(o1);
+		
+		ComposingBoard board = new ComposingBoard(1024);
+		board.height = 500;
+		ComposingFitnessFunction cff = new ComposingFitnessFunction(board);
+		
+		o2.pos.x = 288;
+		boolean i = cff.isIntersect(o2, cms);
+		System.out.println(i);
+		
+	}
 	
 	public static void test() throws Exception{
 		File parent = new File(ModelFactory.RESOURCE, "dat");
 		
-		ComposingModel foot = new ComposingModel(ModelFactory.readData(new File(parent, "脚_左_2.dat")));
-		ComposingModel nose = new ComposingModel(ModelFactory.readData(new File(parent, "鼻梁_1.dat")));
+		
+		ComposingModel o1 = new ComposingModel(ModelFactory.readData(new File(parent, "身体_右_1.dat")));
+		o1.reversal = true;
+		
+		ComposingModel o2 = new ComposingModel(ModelFactory.readData(new File(parent, "内胳_右_1.dat")));
+		
 		
 		List<ComposingModel> cms = new ArrayList<ComposingModel>();
-		cms.add(foot);
-		cms.add(nose);
+		cms.add(o1);
+		cms.add(o2);
 		
-		foot.order = 0;
-		foot.reversal = true;
-		nose.order = 1;
+//		cms.add(new ComposingModel(ModelFactory.readData(new File(parent, "手掌_右_1.dat"))));
+//		cms.add(new ComposingModel(ModelFactory.readData(new File(parent, "手掌_左_1.dat"))));
 		
-		nose.pos.y = foot.getCurModel().getHeight()/2;
 		
 		Individual<ComposingModel> individual = new Individual<ComposingModel>(cms);
 		
 		ComposingBoard board = new ComposingBoard(1024);
-		board.height = 768;
+		board.height = 500;
 		ComposingFitnessFunction cff = new ComposingFitnessFunction(board);
 		cff.getValue(individual);
+		
+		System.out.println(o2.pos.x);
 		
 		BufferedImage img = board.draw(individual);
 		new ImageFrame().show(img);

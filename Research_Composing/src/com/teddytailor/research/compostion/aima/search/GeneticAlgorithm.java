@@ -274,6 +274,7 @@ public class GeneticAlgorithm<A> {
 				bestIndividual = individual;
 				bestSoFarFValue = fValue;
 			}
+			System.out.printf("%s>%s\n", fValue , bestSoFarFValue);
 		}
 		
 		bestIndividual.score = bestSoFarFValue;

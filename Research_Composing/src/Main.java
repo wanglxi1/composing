@@ -1,6 +1,7 @@
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +35,7 @@ public class Main {
 //		maxTimeMilliseconds = 1000L * 60;
 		
 		double mutationProbability = 0.9;
-		int population_len = 100;
+		int population_len = 10;
 		
 		List<ComposingModel> models = buildModels(new File(ModelFactory.RESOURCE, "dat"));
 		int modelLen = models.size();
@@ -45,7 +46,7 @@ public class Main {
 		ComposingFiniteAlphabetBuilder finiteAlphabetBuilder = new ComposingFiniteAlphabetBuilder(board);
 		ComposingFitnessFunction fitnessFunction = new ComposingFitnessFunction(board);
 		ComposingGoalTest goalTest = new ComposingGoalTest();
-		
+		goalTest.board = board;
 		
 //		Set<Individual<ComposingModel>>[] populations = new Set[ThreadGeneticAlgorithm.THREAD_SIZE];
 //		for(int j=0,jmax=populations.length; j<jmax; j++) {
@@ -70,8 +71,8 @@ public class Main {
 		
 		BufferedImage img = board.draw(bestIndividual);
 //		new ImageFrame().show(img);
-		ImageIO.write(img, "jpg", new File("E:\\best_"+Double.valueOf(bestIndividual.score).intValue()+".jpg"));
 		
+		showImage(img, Double.valueOf(bestIndividual.score).intValue()+"");
 		
 		
 		//经验证，使用多线程后，效率反而降低，可能是伪双核的原因
@@ -91,6 +92,14 @@ public class Main {
 //		
 //		ThreadGeneticAlgorithm<ComposingModel> ga = new ThreadGeneticAlgorithm<ComposingModel>(modelLen, finiteAlphabetBuilder, mutationProbability);
 //		ga.geneticAlgorithm(populations, fitnessFunction, goalTest, maxTimeMilliseconds);
+	}
+	
+	public static void showImage(BufferedImage img, String name) {
+		try {
+			ImageIO.write(img, "jpg", new File("E:\\best_"+name+".jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

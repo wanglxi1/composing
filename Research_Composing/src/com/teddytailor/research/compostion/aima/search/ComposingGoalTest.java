@@ -1,11 +1,20 @@
 package com.teddytailor.research.compostion.aima.search;
 
-import com.teddytailor.research.compostion.aima.data.ComposingModel;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import aima.core.search.framework.GoalTest;
 import aima.core.search.local.Individual;
 
+import com.teddytailor.research.compostion.aima.data.ComposingBoard;
+import com.teddytailor.research.compostion.aima.data.ComposingModel;
+
 public class ComposingGoalTest implements GoalTest {
+	
+	public ComposingBoard board = null;
 	
 	public Individual<ComposingModel> best = null;
 	
@@ -15,10 +24,19 @@ public class ComposingGoalTest implements GoalTest {
 			
 		if(best==null || im.score>best.score) {
 			best = im;
+			showImage(board.draw(im), best.score+"_"+System.currentTimeMillis());
 		}
 				
 		System.out.println(im.score);
-		return im.score >= 0;
+		return im.score >= 1000;
+	}
+	
+	public static void showImage(BufferedImage img, String name) {
+		try {
+			ImageIO.write(img, "jpg", new File("E:\\best_"+name+".jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

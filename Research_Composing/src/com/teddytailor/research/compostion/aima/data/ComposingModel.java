@@ -38,6 +38,6 @@ public class ComposingModel {
 
 	@Override
 	public int hashCode() {
-		return Boolean.valueOf(reversal).hashCode() + this.getOriginModel().hashCode()*2 + pos.hashCode()*32;
+		return Boolean.valueOf(reversal).hashCode() + this.getOriginModel().hashCode()*2;
 	}
 }

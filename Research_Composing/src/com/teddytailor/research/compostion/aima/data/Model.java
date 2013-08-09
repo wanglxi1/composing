@@ -71,6 +71,7 @@ public class Model implements Serializable {
 	 * @param offset
 	 * @return
 	 */
+	public final static int[] deltas = {-1, 1};
 	public boolean intersect(Model model, Point offset) {
 		Rectangle r1 = new Rectangle(this.getWidth(), this.getHeight());
 		Rectangle r2 = new Rectangle(offset.x, offset.y, model.getWidth(), model.getHeight());
@@ -79,24 +80,37 @@ public class Model implements Serializable {
 		if(ir.isEmpty()) return false;
 		
 		
-		boolean intersect = false;
-		for(int y=ir.y,ymax=ir.y+ir.height; y<ymax; y++) {
-			List<Integer> xs2 = model.yX.get(y-offset.y);
-			List<Integer> xs1 = this.yX.get(y);
+		for(int y1=ir.y,ymax=ir.y+ir.height; y1<ymax; y1++) {
+			int y2 = y1-offset.y;
+			List<Integer> xs1 = this.yX.get(y1);
+			List<Integer> xs2 = model.yX.get(y2);
 			
 			for(int x: xs2) {
 				int ox = x + offset.x;
 				if(ox>=ir.x && ox<=ir.getMaxX()) {
-					
 					if(xs1.contains(ox)) {
-						intersect = true;
-						break;
+						return true;
+					}else {
+						//修正田字交叉造成的伪不相交的情况
+						for(int dx: deltas) {
+							if(xs1.contains(ox + dx)) {
+								for(int dy: deltas) {
+									List<Integer> xs1_d = this.yX.get(y1+dy);
+									if(xs1_d!=null && xs1_d.contains(ox)) {
+										List<Integer> xs2_d = model.yX.get(y2+dy);
+										if(xs2_d!=null && xs2_d.contains(x + dx)) {
+											return true;
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 			}
 		}
 		
-		return intersect;
+		return false;
 	}
 	
 	/**

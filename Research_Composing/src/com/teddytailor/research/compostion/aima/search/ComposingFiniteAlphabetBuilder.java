@@ -7,11 +7,9 @@ import com.teddytailor.research.compostion.aima.data.ComposingModel;
 
 public class ComposingFiniteAlphabetBuilder implements FiniteAlphabetBuilder<ComposingModel> {
 
-	private ComposingBoard board;
 	protected Random random;
 	
 	public ComposingFiniteAlphabetBuilder(ComposingBoard board) {
-		this.board = board;
 		this.random = new Random();
 	}
 	
@@ -19,13 +17,6 @@ public class ComposingFiniteAlphabetBuilder implements FiniteAlphabetBuilder<Com
 	public ComposingModel build(ComposingModel origin) {
 		origin.reversal = random.nextBoolean();
 		origin.order = random.nextFloat();
-		
-		int yDist = board.height - origin.getCurModel().getHeight();
-		if(yDist == 0) {
-			origin.pos.y = 0;
-		}else {
-			origin.pos.y = random.nextInt(yDist);
-		}
 		
 		return origin;
 	}

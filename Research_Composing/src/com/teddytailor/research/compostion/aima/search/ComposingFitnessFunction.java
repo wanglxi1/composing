@@ -59,12 +59,14 @@ public class ComposingFitnessFunction implements FitnessFunction<ComposingModel>
 		
 		int undown = downCms.size() - cms.size();
 		if(undown < 0) {
-			result = undown;
+			result = downCms.size();
 		}else {
 			result = boardWidth - preMaxX;
+			result += 1000; 
 		}
 		
 		downCms = null;
+		System.out.println(result);
 		valueCache.put(cms, result);
 		
 		return result;
@@ -76,17 +78,10 @@ public class ComposingFitnessFunction implements FitnessFunction<ComposingModel>
 		for(int x = startX-1; x>=0; x--) {
 			cm.pos.x = x;
 			
+			int originY = cm.pos.y;
 			if(isIntersect(cm, downCms)) {
-				int orginY = cm.pos.y;
-				
-				cm.pos.y = orginY - 1;
-				if(isIntersect(cm, downCms)) {
-					cm.pos.y = orginY + 1;
-					if(isIntersect(cm, downCms)) {
-						cm.pos.y = orginY;
-						break;
-					}
-				}
+				cm.pos.y = originY;
+				break;
 			}
 			minX = x;
 		}
@@ -94,15 +89,21 @@ public class ComposingFitnessFunction implements FitnessFunction<ComposingModel>
 	}
 	
 	public boolean isIntersect(ComposingModel cm, List<ComposingModel> downCms) {
-		if(cm.pos.y<0 || cm.pos.y+cm.getCurModel().getHeight()>this.board.height) return true;
-		
-		boolean isIntersect = false;
-		for(ComposingModel dCm: downCms) {
-			if(cm.intersect(dCm)) {
-				isIntersect = true;
-				break;
+		for(int y=0,ymax=board.height-cm.getCurModel().getHeight(); y<ymax; y++) {
+			cm.pos.y = y;
+			
+			boolean isIntersect = false;
+			for(ComposingModel dCm: downCms) {
+				if(cm.intersect(dCm)) {
+					isIntersect = true;
+					break;
+				}
+			}
+			
+			if(!isIntersect){
+				return false;
 			}
 		}
-		return isIntersect;
+		return true;
 	}
 }
