@@ -38,7 +38,7 @@ public class Main {
 //		maxTimeMilliseconds = 1000L * 60;
 		
 		double mutationProbability = 0.13;
-		int population_len = 100;
+		int population_len = 33;
 		
 		List<ComposingModel> models = buildModels();
 		int modelLen = models.size();

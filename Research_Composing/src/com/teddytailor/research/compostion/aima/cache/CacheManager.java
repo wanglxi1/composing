@@ -66,6 +66,8 @@ public class CacheManager {
 		if(!CACHE.containsKey(key)) {
 			CACHE.put(key, new Point(p));
 			sync(key, p);
+		}else {
+			System.out.printf("ZC: %s \t %s \t %s\n");
 		}
 	}
 	
