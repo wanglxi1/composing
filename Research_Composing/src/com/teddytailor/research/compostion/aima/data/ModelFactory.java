@@ -19,8 +19,8 @@ public class ModelFactory {
 	static {
 		URL url = ClassLoader.getSystemResource("");
 		if(url == null) {
-			url = ClassLoader.getSystemResource("Main.class");
-			RESOURCE = new File(url.getFile().substring("file:\\".length())).getParentFile().getParentFile();
+			url = ClassLoader.getSystemResource("com/Main.class");
+			RESOURCE = new File(url.getFile().substring("file:\\".length())).getParentFile().getParentFile().getParentFile();
 			RESOURCE = new File(RESOURCE, "resource");
 		}else {
 			RESOURCE = new File(new File(url.getFile()).getParentFile(), "resource");
