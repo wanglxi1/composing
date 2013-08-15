@@ -3,7 +3,6 @@ package com.teddytailor.research.compostion.aima.cache;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -73,8 +72,8 @@ public class CacheManager {
 	private static void sync(List<Integer> key, Point p) {
 		if(SYNC_CHANNEL == null) {
 			try {
-				SYNC_CHANNEL = new FileOutputStream(FILE).getChannel();
-			} catch (FileNotFoundException e) {
+				SYNC_CHANNEL = new FileOutputStream(FILE, true).getChannel();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
