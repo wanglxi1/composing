@@ -10,25 +10,24 @@ import aima.core.search.framework.GoalTest;
 import aima.core.search.local.Individual;
 
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
-import com.teddytailor.research.compostion.aima.data.ComposingModel;
 
 public class ComposingGoalTest implements GoalTest {
 	
 	public ComposingBoard board = null;
 	
-	public Individual<ComposingModel> best = null;
+	public Individual<Integer> best = null;
 	
 	@Override
 	public boolean isGoalState(Object state) {
-		Individual<ComposingModel> im = (Individual<ComposingModel>)state;
+		Individual<Integer> im = (Individual<Integer>)state;
 			
 		if(best==null || im.score>best.score) {
 			best = im;
-			showImage(board.draw(im), best.score+"_"+System.currentTimeMillis());
+			showImage(board.draw(im), System.currentTimeMillis() +"_"+ best.score);
 		}
 				
-		System.out.println(im.score);
-		return im.score >= 1000;
+		System.out.println(im.score + "\t" + im);
+		return im.score >= 28;
 	}
 	
 	public static void showImage(BufferedImage img, String name) {

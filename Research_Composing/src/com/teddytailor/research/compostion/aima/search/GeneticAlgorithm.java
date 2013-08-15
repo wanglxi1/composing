@@ -190,6 +190,7 @@ public class GeneticAlgorithm<A> {
 			if (random.nextDouble() <= this.mutationProbability) {
 				child = mutate(child);
 			}
+			
 			// add child to new_population
 			newPopulation.add(child);
 		}
@@ -207,7 +208,8 @@ public class GeneticAlgorithm<A> {
 		// Determine all of the fitness values
 		double[] fValues = new double[population.size()];
 		for (int i = 0; i < population.size(); i++) {
-			fValues[i] = fitnessFn.getValue(population.get(i));
+			Individual<A> ind = population.get(i);
+			fValues[i] = fitnessFn.getValue(ind);
 		}
 
 		// Normalize the fitness values
@@ -250,7 +252,7 @@ public class GeneticAlgorithm<A> {
 		Individual<A> child = new Individual<A>(childRepresentation);
 		return child;
 	}
-
+	
 	protected Individual<A> mutate(Individual<A> child) {
 		int mutateOffset = randomOffset(individualLength);
 
@@ -274,7 +276,6 @@ public class GeneticAlgorithm<A> {
 				bestIndividual = individual;
 				bestSoFarFValue = fValue;
 			}
-			System.out.printf("%s>%s\n", fValue , bestSoFarFValue);
 		}
 		
 		bestIndividual.score = bestSoFarFValue;

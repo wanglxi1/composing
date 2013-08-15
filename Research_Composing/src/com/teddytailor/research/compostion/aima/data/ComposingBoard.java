@@ -3,22 +3,42 @@ package com.teddytailor.research.compostion.aima.data;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import aima.core.search.local.Individual;
 
+import com.teddytailor.research.compostion.aima.search.ComposingFitnessFunction;
+
 public class ComposingBoard {
 	private int width;
-	public int height;
+	private int height;
 	
-	public ComposingBoard(int width) {
-		this.width = width;
+	private List<ComposingModel> models;
+	
+	public int getWidth() {
+		return this.width;
+	}
+	public int getHeight() {
+		return this.height;
+	}
+	public List<ComposingModel> getModels(){
+		return models;
 	}
 	
-	public double calcUsePersent(Individual<ComposingModel> im) {
+	public ComposingBoard(List<ComposingModel> models, int width, int height) {
+		this.models = models;
+		this.width = width;
+		this.height = height;
+	}
+	
+	public double calcUsePersent(List<ComposingModel> cms) {
 		int maxY = 0;
 		int useArea = 0;
 		
-		for(ComposingModel cm: im.getRepresentation()) {
+		for(ComposingModel cm: cms) {
 			Model m = cm.getCurModel();
 			useArea += m.getArea();
 			maxY = Math.max(maxY, cm.pos.y+m.getHeight());
@@ -28,11 +48,7 @@ public class ComposingBoard {
 		return 1F * useArea / totalArea;
 	}
 	
-	public int getWidth() {
-		return this.width;
-	}
-	
-	public BufferedImage draw(Individual<ComposingModel> im) {
+	public BufferedImage draw(Individual<Integer> im) {
 		int maxY = 0;
 		
 //		for(ComposingModel cm: im.getRepresentation()) {
@@ -49,8 +65,8 @@ public class ComposingBoard {
 		img.getGraphics().setColor(Color.WHITE);
 		img.getGraphics().fillRect(0, 0, width, height);
 		
-		for(ComposingModel cm: im.getRepresentation()) {
-			if(cm.out) continue;
+		for(ComposingModel cm: orderPosModels(im)) {
+			if(cm.pos.x == Integer.MAX_VALUE) continue;
 			
 			Point pos = cm.pos;
 			for(Point p: cm.getCurModel().fillPoint()) {
@@ -65,5 +81,51 @@ public class ComposingBoard {
 		}
 		
 		return img;
+	}
+	
+	public static List<OrderInteger> orderIntegers(Individual<Integer> individual){
+		List<Integer> is = new ArrayList<Integer>(individual.getRepresentation());
+		int size = is.size();
+		List<OrderInteger> ois = new ArrayList<OrderInteger>(size);
+		for(int i=0,imax=size; i<imax; i++) {
+			ois.add(OrderInteger.valueOf(i, is.get(i)));
+		}
+		Collections.sort(ois, OrderInteger.COMPARATOR);
+		return ois;
+	}
+	
+	public List<ComposingModel> orderModels(Individual<Integer> individual){
+		return orderModels(orderIntegers(individual));
+	}
+	
+	public List<ComposingModel> orderModels(List<OrderInteger> ois){
+		List<ComposingModel> cms = new ArrayList<ComposingModel>(ois.size());
+		for(OrderInteger oi: ois) {
+			ComposingModel cm = this.models.get(oi.origin);
+			cm.reversal = oi.reversal;
+			cms.add(cm);
+		}
+		return cms;
+	}
+	
+	private List<ComposingModel> orderPosModels(Individual<Integer> individual){
+		List<OrderInteger> ois = orderIntegers(individual);
+		
+		int hashCode = ois.hashCode();
+		List<Point> posLs = ComposingFitnessFunction.POINT_RESULT.get(hashCode);
+		Iterator<Point> posIterator = posLs.iterator();
+		
+		List<ComposingModel> cms = new ArrayList<ComposingModel>(ois.size());
+		for(OrderInteger oi: ois) {
+			ComposingModel cm = this.models.get(oi.origin);
+			if(posIterator.hasNext()) {
+				cm.pos = new Point(posIterator.next());
+			}else {
+				cm.pos.x = Integer.MAX_VALUE;
+			}
+			cm.reversal = oi.reversal;
+			cms.add(cm);
+		}
+		return cms;
 	}
 }

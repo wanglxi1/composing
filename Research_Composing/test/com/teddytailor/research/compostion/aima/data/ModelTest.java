@@ -22,7 +22,7 @@ public class ModelTest {
 		new ImageFrame(new ImageProcessHandler() {
 			@Override
 			public Image process(File f) throws Exception {
-				Model m = ModelFactory.readImg(f).reversal();
+				Model m = ModelFactory.readImg(f).reversal;
 				Set<Point> ps = m.fillPoint();
 				
 				

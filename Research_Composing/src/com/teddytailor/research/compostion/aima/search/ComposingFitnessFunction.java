@@ -1,8 +1,7 @@
 package com.teddytailor.research.compostion.aima.search;
 
+import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,78 +9,101 @@ import java.util.Map;
 import aima.core.search.local.FitnessFunction;
 import aima.core.search.local.Individual;
 
+import com.teddytailor.research.compostion.aima.cache.CacheManager;
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
 import com.teddytailor.research.compostion.aima.data.ComposingModel;
+import com.teddytailor.research.compostion.aima.data.OrderInteger;
 
-public class ComposingFitnessFunction implements FitnessFunction<ComposingModel>, Comparator<ComposingModel> {
+public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 
 	private ComposingBoard board;
 	
-	private Map<List<ComposingModel>, Integer> valueCache = new HashMap<List<ComposingModel>, Integer>();//ConcurrentHashMap
+	private static Map<Integer, Double> VALUE_CACHE = new HashMap<Integer, Double>();//ConcurrentHashMap
+	public static Map<Integer, List<Point>> POINT_RESULT = new HashMap<Integer, List<Point>>();
 	
 	public ComposingFitnessFunction(ComposingBoard board) {
 		this.board = board;
 	}
 	
-	@Override
-	public int compare(ComposingModel o1, ComposingModel o2) {
-		return Float.valueOf(o1.order).compareTo(o2.order);
-	}
 	
 	@Override
-	public double getValue(Individual<ComposingModel> individual) {
-		List<ComposingModel> cms = new ArrayList(individual.getRepresentation());
-		Collections.sort(cms, this);
-			
-		Integer value = valueCache.get(cms);
+	public double getValue(Individual<Integer> individual) {
+		List<OrderInteger> ois = ComposingBoard.orderIntegers(individual);
+		int OIS_HASHCODE = ois.hashCode();
+		
+		
+		Double value = VALUE_CACHE.get(OIS_HASHCODE);
 		if(value != null) {
 			return value;
 		}
 		
 		int boardWidth = this.board.getWidth();
 		
+		List<ComposingModel> cms = this.board.orderModels(ois);
+		
 		List<ComposingModel> downCms = new ArrayList<ComposingModel>(cms.size());
 		int preMaxX = 0;
 		for(ComposingModel cm: cms) {
-			cm.out = preMaxX > boardWidth; 
-			if(cm.out) {
+			if(preMaxX > boardWidth) {
 				continue;
 			}
+			int minX;
 			
-			int minX = orderDown(preMaxX, cm, downCms);
-			cm.pos.x = minX;
+			List<Integer> cacheHashCode = calcHashCode(ois, downCms);
+			Point cache = CacheManager.get(cacheHashCode); 
+			if(cache == null) {
+				cm.pos.y = 0;
+				cm.pos.x = preMaxX;
+				minX = orderDown(cm, downCms);
+				cm.pos.x = minX;
+				
+				CacheManager.put(cacheHashCode, cm.pos);
+			}else {
+				cm.pos = new Point(cache);
+				minX = cm.pos.x;
+			}
 			downCms.add(cm);
 			
-			preMaxX = minX + cm.getCurModel().getWidth();
+			preMaxX = Math.max(preMaxX, minX + cm.getCurModel().getWidth());
 		}
 		
-		int result;
+		double result = downCms.size();
+		double overX = (double)(boardWidth-preMaxX) / boardWidth;
+		result += overX;
 		
-		int undown = downCms.size() - cms.size();
-		if(undown < 0) {
-			result = downCms.size();
-		}else {
-			result = boardWidth - preMaxX;
-			result += 1000; 
+		
+		//保存位置记录
+		List<Point> pointResult = new ArrayList<Point>();
+		for(int i=0,imax=downCms.size(); i<imax; i++) {
+			ComposingModel cm = downCms.get(i);
+			Point pos = new Point(cm.pos);
+			pointResult.add(pos);
 		}
-		
 		downCms = null;
-		System.out.println(result);
-		valueCache.put(cms, result);
+		POINT_RESULT.put(OIS_HASHCODE, pointResult);
+		VALUE_CACHE.put(OIS_HASHCODE, result);
 		
 		return result;
 	}
+	
+	private List<Integer> calcHashCode(List<OrderInteger> ois, List<ComposingModel> downCms) {
+		int size = downCms.size()+1;
+		List<Integer> sb = new ArrayList<Integer>(size);
+		for(OrderInteger oi: ois.subList(0, size)) {
+			sb.add(oi.toInt());
+		}
+		return sb;
+	}
 
 	
-	public int orderDown(int startX, ComposingModel cm, List<ComposingModel> downCms) {
-		int minX = startX;
-		for(int x = startX-1; x>=0; x--) {
+	public int orderDown(ComposingModel cm, List<ComposingModel> downCms) {
+		int minX = cm.pos.x;
+		for(int x = minX-1; x>=0; x--) {
 			cm.pos.x = x;
-			
 			int originY = cm.pos.y;
 			if(isIntersect(cm, downCms)) {
 				cm.pos.y = originY;
-				break;
+				return minX;
 			}
 			minX = x;
 		}
@@ -89,7 +111,7 @@ public class ComposingFitnessFunction implements FitnessFunction<ComposingModel>
 	}
 	
 	public boolean isIntersect(ComposingModel cm, List<ComposingModel> downCms) {
-		for(int y=0,ymax=board.height-cm.getCurModel().getHeight(); y<ymax; y++) {
+		for(int y=0,ymax=board.getHeight()-cm.getCurModel().getHeight(); y<ymax; y++) {
 			cm.pos.y = y;
 			
 			boolean isIntersect = false;
@@ -107,3 +129,4 @@ public class ComposingFitnessFunction implements FitnessFunction<ComposingModel>
 		return true;
 	}
 }
+

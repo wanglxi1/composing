@@ -47,4 +47,9 @@ public class Individual<A> {
 	public int length() {
 		return representation.size();
 	}
+
+	@Override
+	public String toString() {
+		return representation.toString();
+	}
 }

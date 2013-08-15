@@ -3,9 +3,8 @@ package com.teddytailor.research.compostion.aima.search;
 import java.util.Random;
 
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
-import com.teddytailor.research.compostion.aima.data.ComposingModel;
 
-public class ComposingFiniteAlphabetBuilder implements FiniteAlphabetBuilder<ComposingModel> {
+public class ComposingFiniteAlphabetBuilder implements FiniteAlphabetBuilder<Integer> {
 
 	protected Random random;
 	
@@ -14,11 +13,11 @@ public class ComposingFiniteAlphabetBuilder implements FiniteAlphabetBuilder<Com
 	}
 	
 	@Override
-	public ComposingModel build(ComposingModel origin) {
-		origin.reversal = random.nextBoolean();
-		origin.order = random.nextFloat();
+	public Integer build(Integer origin) {
+		boolean reversal = random.nextBoolean();
+		int order = random.nextInt(100);
 		
-		return origin;
+		return order * (reversal? -1: 1);
 	}
 	
 	

@@ -1,77 +1,66 @@
 package com.teddytailor.research.compostion;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import aima.core.search.local.Individual;
 
+import com.Main;
+import com.teddytailor.research.compostion.aima.cache.CacheManager;
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
 import com.teddytailor.research.compostion.aima.data.ComposingModel;
-import com.teddytailor.research.compostion.aima.data.ModelFactory;
+import com.teddytailor.research.compostion.aima.data.OrderInteger;
 import com.teddytailor.research.compostion.aima.search.ComposingFitnessFunction;
 import com.teddytailor.research.ocr.util.ImageFrame;
 
 public class OrderDownTest {
 	
 	public static void main(String[] args) throws Exception{
-		test();
-//		testIntersect();
+		mock();
 	}
 	
 	
-	public static void testIntersect() throws Exception{
-		File parent = new File(ModelFactory.RESOURCE, "dat");
+	public static void mock() throws Exception{
+		CacheManager.CACHE_CONTROL = true;
 		
-		ComposingModel o1 = new ComposingModel(ModelFactory.readData(new File(parent, "身体_右_1.dat")));
-		o1.reversal = true;
+		int[] orders = {
+				-4, 55, -77, -31, -36, -31, -68, -8, -16, 6, 58, -39, -48, -45, -6, 62, -66, 92, 75, -19, 64, -98, -23, -34, 96, -71, 64, -33
+		};
+		int len = 28;
+//		len = 7;
 		
-		ComposingModel o2 = new ComposingModel(ModelFactory.readData(new File(parent, "内胳_右_1.dat")));
-		
-		
-		List<ComposingModel> cms = new ArrayList<ComposingModel>();
-		cms.add(o1);
-		
-		ComposingBoard board = new ComposingBoard(1024);
-		board.height = 500;
-		ComposingFitnessFunction cff = new ComposingFitnessFunction(board);
-		
-		o2.pos.x = 288;
-		boolean i = cff.isIntersect(o2, cms);
-		System.out.println(i);
-		
-	}
-	
-	public static void test() throws Exception{
-		File parent = new File(ModelFactory.RESOURCE, "dat");
+		List<Integer> is = new ArrayList<Integer>();
+		for(int i=0,imax=orders.length;i<imax;i++) {
+			is.add(orders[i]);
+		}
+		Individual<Integer> individual = new Individual<Integer>(is);
+		List<OrderInteger> ois = ComposingBoard.orderIntegers(individual);
 		
 		
-		ComposingModel o1 = new ComposingModel(ModelFactory.readData(new File(parent, "身体_右_1.dat")));
-		o1.reversal = true;
+		List<ComposingModel> cms = Main.buildModels();
+		if(len != orders.length) {
+			ois = ois.subList(0, len);
+			
+			List<ComposingModel> ncms = new ArrayList<ComposingModel>(len);
+			List<Integer> nis = new ArrayList<Integer>(len);
+			for(OrderInteger oi: ois) {
+				nis.add(oi.toInt());
+				ncms.add(cms.get(oi.origin));
+				
+			}
+			
+			individual = new Individual<Integer>(nis);
+			cms = ncms;
+		}
 		
-		ComposingModel o2 = new ComposingModel(ModelFactory.readData(new File(parent, "内胳_右_1.dat")));
-		
-		
-		List<ComposingModel> cms = new ArrayList<ComposingModel>();
-		cms.add(o1);
-		cms.add(o2);
-		
-//		cms.add(new ComposingModel(ModelFactory.readData(new File(parent, "手掌_右_1.dat"))));
-//		cms.add(new ComposingModel(ModelFactory.readData(new File(parent, "手掌_左_1.dat"))));
-		
-		
-		Individual<ComposingModel> individual = new Individual<ComposingModel>(cms);
-		
-		ComposingBoard board = new ComposingBoard(1024);
-		board.height = 500;
+		ComposingBoard board = new ComposingBoard(cms, 2534, 463);
 		ComposingFitnessFunction cff = new ComposingFitnessFunction(board);
 		cff.getValue(individual);
 		
-		System.out.println(o2.pos.x);
+		System.out.println(cms.get(cms.size()-1).pos);
 		
 		BufferedImage img = board.draw(individual);
 		new ImageFrame().show(img);
 	}
-	
 }

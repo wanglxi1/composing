@@ -1,3 +1,4 @@
+package com;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -22,6 +23,8 @@ import com.teddytailor.research.compostion.aima.search.GeneticAlgorithm;
 
 public class Main {
 
+	public final static File F_DAT = new File(ModelFactory.RESOURCE, "dat");
+	
 	public static int COMPOSING_BOARD_WIDTH = 0;
 	public static int COMPOSING_BOARD_HEIGHT = 0;
 	
@@ -34,14 +37,13 @@ public class Main {
 		long maxTimeMilliseconds = 0;
 //		maxTimeMilliseconds = 1000L * 60;
 		
-		double mutationProbability = 0.9;
-		int population_len = 10;
+		double mutationProbability = 0.13;
+		int population_len = 100;
 		
-		List<ComposingModel> models = buildModels(new File(ModelFactory.RESOURCE, "dat"));
+		List<ComposingModel> models = buildModels();
 		int modelLen = models.size();
 		
-		final ComposingBoard board = new ComposingBoard(COMPOSING_BOARD_WIDTH+1);
-		board.height = COMPOSING_BOARD_HEIGHT+1;
+		final ComposingBoard board = new ComposingBoard(models, COMPOSING_BOARD_WIDTH+1, COMPOSING_BOARD_HEIGHT+1);
 		
 		ComposingFiniteAlphabetBuilder finiteAlphabetBuilder = new ComposingFiniteAlphabetBuilder(board);
 		ComposingFitnessFunction fitnessFunction = new ComposingFitnessFunction(board);
@@ -53,19 +55,20 @@ public class Main {
 //			populations[j] = population;
 //		}
 		
-		Set<Individual<ComposingModel>> population = new HashSet<Individual<ComposingModel>>();
+		Set<Individual<Integer>> population = new HashSet<Individual<Integer>>();
 		for(int i=0; i<population_len; i++) {
-			List<ComposingModel> ls = new ArrayList<ComposingModel>(modelLen);
-			for(ComposingModel m: models) {
-				ls.add(finiteAlphabetBuilder.build(m));
+			List<Integer> ls = new ArrayList<Integer>(modelLen);
+			for(int a=0,amax=modelLen; a<amax; a++) {
+				ls.add(finiteAlphabetBuilder.build(a*100));
 			}
-			population.add(new Individual<ComposingModel>(ls));
+			population.add(new Individual<Integer>(ls));
 		}
 		
+		System.out.println("Init Finish.");
 		
-		GeneticAlgorithm<ComposingModel> ga = new GeneticAlgorithm<ComposingModel>(modelLen, finiteAlphabetBuilder, mutationProbability);
+		GeneticAlgorithm<Integer> ga = new GeneticAlgorithm<Integer>(modelLen, finiteAlphabetBuilder, mutationProbability);
 		// Run for a set amount of time
-		Individual<ComposingModel> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest, maxTimeMilliseconds);
+		Individual<Integer> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest, maxTimeMilliseconds);
 	
 		bestIndividual = goalTest.best;
 		
@@ -103,10 +106,10 @@ public class Main {
 	}
 	
 	
-	private static List<ComposingModel> buildModels(File parent) throws Exception {
+	public static List<ComposingModel> buildModels() throws Exception {
 		List<ComposingModel> models = new ArrayList<ComposingModel>();
 		
-		for(File f: parent.listFiles()) {
+		for(File f: F_DAT.listFiles()) {
 			Model m = ModelFactory.readData(f);
 			
 			String fileName = f.getName();
