@@ -22,13 +22,13 @@ public class OrderDownTest {
 	
 	
 	public static void mock() throws Exception{
-		CacheManager.CACHE_CONTROL = true;
+		CacheManager.CACHE_CONTROL = false;
 		
 		int[] orders = {
-				-4, 55, -77, -31, -36, -31, -68, -8, -16, 6, 58, -39, -48, -45, -6, 62, -66, 92, 75, -19, 64, -98, -23, -34, 96, -71, 64, -33
+				68, -76, -76, 60, -34, 53, 13, -59, -62, -3, -67, -59, -32, 21, -31, -24, 35, -46, 73, -25, 22, -14, -55, -91, -22, 94, -42, 41
 		};
 		int len = 28;
-//		len = 7;
+		len = 4;
 		
 		List<Integer> is = new ArrayList<Integer>();
 		for(int i=0,imax=orders.length;i<imax;i++) {

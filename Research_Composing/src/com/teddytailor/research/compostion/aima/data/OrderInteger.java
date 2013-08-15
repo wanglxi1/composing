@@ -29,6 +29,10 @@ public class OrderInteger{
 		return this.order * (this.reversal? -1: 1);
 	}
 	
+	public byte toByte() {
+		return (byte)(this.origin* (this.reversal? -1: 1));
+	}
+	
 	@Override
 	public int hashCode() {
 		return origin*2 + (reversal? 1: 0);

@@ -49,8 +49,8 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 			}
 			int minX;
 			
-			List<Integer> cacheHashCode = calcHashCode(ois, downCms);
-			Point cache = CacheManager.get(cacheHashCode); 
+			List<Byte> cacheHashCode = calcHashCode(ois, downCms);
+			Point cache = CacheManager.get(cacheHashCode);			
 			if(cache == null) {
 				cm.pos.y = 0;
 				cm.pos.x = preMaxX;
@@ -86,11 +86,11 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		return result;
 	}
 	
-	private List<Integer> calcHashCode(List<OrderInteger> ois, List<ComposingModel> downCms) {
+	private List<Byte> calcHashCode(List<OrderInteger> ois, List<ComposingModel> downCms) {
 		int size = downCms.size()+1;
-		List<Integer> sb = new ArrayList<Integer>(size);
+		List<Byte> sb = new ArrayList<Byte>(size);
 		for(OrderInteger oi: ois.subList(0, size)) {
-			sb.add(oi.toInt());
+			sb.add(oi.toByte());
 		}
 		return sb;
 	}

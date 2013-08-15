@@ -22,10 +22,10 @@ public class CacheManager {
 	
 	public static boolean CACHE_CONTROL = false;
 	
-	private static Map<List<Integer>, Point> CACHE = read();
+	private static Map<List<Byte>, Point> CACHE = read();
 	
-	private static Map<List<Integer>, Point> read() {
-		CACHE = new HashMap<List<Integer>, Point>();
+	private static Map<List<Byte>, Point> read() {
+		CACHE = new HashMap<List<Byte>, Point>();
 		
 		if(!FILE.exists()) return CACHE;
 		
@@ -43,11 +43,17 @@ public class CacheManager {
 				ByteBuffer sbuf = ByteBuffer.allocateDirect(len);
 				fc.read(sbuf);
 				sbuf.flip();
-				List<Integer> cs = new ArrayList<Integer>(len);
+				List<Byte> cs = new ArrayList<Byte>(len);
 				for(int i=0;i<len;i++) {
-					cs.add( (int)sbuf.get() );
+					cs.add( sbuf.get() );
 				}
-				CACHE.put(cs, new Point(x, y));
+				
+				Point p = new Point(x, y);
+				if(CACHE.containsKey(cs)) {
+					System.out.printf("CF: %s \t %s \t %s\n", cs, CACHE.get(cs), p);
+				}
+				
+				CACHE.put(cs, p);
 				sbuf = null;
 			}
 		} catch (Exception e) {
@@ -62,16 +68,16 @@ public class CacheManager {
 		return CACHE.get(hashCode);
 	}
 	
-	public static void put(List<Integer> key, Point p) {
+	public static void put(List<Byte> key, Point p) {
 		if(!CACHE.containsKey(key)) {
 			CACHE.put(key, new Point(p));
 			sync(key, p);
 		}else {
-			System.out.printf("ZC: %s \t %s \t %s\n");
+			System.out.printf("ZC: %s \t %s \t %s\n", key, CACHE.get(key), p);
 		}
 	}
 	
-	private static void sync(List<Integer> key, Point p) {
+	private static void sync(List<Byte> key, Point p) {
 		if(SYNC_CHANNEL == null) {
 			try {
 				SYNC_CHANNEL = new FileOutputStream(FILE, true).getChannel();
@@ -84,8 +90,8 @@ public class CacheManager {
 		buf.putInt(p.x)
 			.putInt(p.y)
 			.putInt(key.size());
-		for(int c: key) {
-			buf.put((byte)c);
+		for(byte c: key) {
+			buf.put(c);
 		}
 		buf.flip();
 		
