@@ -21,7 +21,7 @@ public class CacheManager {
 	private final static File FILE = new File(ModelFactory.RESOURCE, "cache");
 	private static FileChannel SYNC_CHANNEL = null;
 	
-	public static boolean CACHE_CONTROL = true;
+	public static boolean CACHE_CONTROL = false;
 	
 	private static Map<List<Integer>, Point> CACHE = read();
 	
