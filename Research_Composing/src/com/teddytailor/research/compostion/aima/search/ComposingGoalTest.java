@@ -24,7 +24,7 @@ public class ComposingGoalTest implements GoalTest {
 			
 		if(best==null || im.score>best.score) {
 			best = im;
-			showImage(board.draw(im), System.currentTimeMillis() +"_"+ best.score);
+			showImage(board.draw(im), best.score +"_"+ System.currentTimeMillis());
 		}
 				
 		System.out.println(im.score + "\t" + im);
