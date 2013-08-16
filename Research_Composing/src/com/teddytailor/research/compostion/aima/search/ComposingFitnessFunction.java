@@ -112,23 +112,52 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		return minX;
 	}
 	
+	private final static int[] REGION = {1, -1};
 	public boolean isIntersect(ComposingModel cm, List<ComposingModel> downCms) {
-		for(int y=0,ymax=board.getHeight()-cm.getCurModel().getHeight(); y<ymax; y++) {
-			cm.pos.y = y;
-			
-			boolean isIntersect = false;
-			for(ComposingModel dCm: downCms) {
-				if(cm.intersect(dCm)) {
-					isIntersect = true;
-					break;
-				}
-			}
-			
-			if(!isIntersect){
-				return false;
+		int curY = cm.pos.y;
+		boolean isIntersect = isIntersect(cm, downCms, curY);
+		if(!isIntersect) return false;
+		
+		int ly = 0;
+		int ry = board.getHeight()-cm.getCurModel().getHeight();
+		
+		int lyd = curY-ly;
+		int ryd = ry-curY;
+		int delta = Math.min(lyd, ryd);
+		int leaveL, leaveR;
+		if(lyd >= ryd) {
+			leaveL = ly;
+			leaveR = curY - delta - 1;
+		}else {
+			leaveL = curY + delta + 1;
+			leaveR = ry;
+		}
+		
+		for(int dy=1; dy<=delta; dy++) {
+			for(int r: REGION) {
+				int y = curY + dy*r;
+				isIntersect = isIntersect(cm, downCms, y);
+				if(!isIntersect) return false;
 			}
 		}
+		
+		for(int y=leaveL; y<=leaveR; y++) {
+			isIntersect = isIntersect(cm, downCms, y);
+			if(!isIntersect) return false;
+		}
+		
 		return true;
+	}
+	
+	public boolean isIntersect(ComposingModel cm, List<ComposingModel> downCms, int y) {
+		cm.pos.y = y;
+		
+		for(ComposingModel dCm: downCms) {
+			if(cm.intersect(dCm)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
 
