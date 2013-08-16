@@ -40,6 +40,13 @@ public class Main {
 		double mutationProbability = 0.13;
 		int population_len = 33;
 		
+		if(args.length > 0) {
+			population_len = Integer.valueOf(args[0]);
+		}
+		if(args.length > 1) {
+			mutationProbability = Double.valueOf(args[1]);
+		}
+		
 		List<ComposingModel> models = buildModels();
 		int modelLen = models.size();
 		
