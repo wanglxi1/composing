@@ -58,7 +58,7 @@ public class CacheManager {
 				sbuf = null;
 			}
 			
-			System.out.printf("use %s, read %s", System.currentTimeMillis()-start, CACHE.size());
+			System.out.printf("use %s, read %s\n", System.currentTimeMillis()-start, CACHE.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
