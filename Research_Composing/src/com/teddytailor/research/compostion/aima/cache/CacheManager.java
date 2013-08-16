@@ -30,6 +30,7 @@ public class CacheManager {
 		if(!FILE.exists()) return CACHE;
 		
 		try {
+			long start = System.currentTimeMillis();
 			FileChannel fc = new FileInputStream(FILE).getChannel();
 			ByteBuffer buf = ByteBuffer.allocateDirect(12);
 			while(fc.read(buf) != -1) {
@@ -56,6 +57,8 @@ public class CacheManager {
 				CACHE.put(cs, p);
 				sbuf = null;
 			}
+			
+			System.out.printf("use %s, read %s", System.currentTimeMillis()-start, CACHE.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
