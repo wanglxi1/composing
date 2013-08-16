@@ -45,6 +45,7 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		int preMaxX = 0;
 		for(ComposingModel cm: cms) {
 			if(preMaxX > boardWidth) {
+				preMaxX += cm.getCurModel().getWidth();
 				continue;
 			}
 			int minX;
@@ -67,9 +68,10 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 			preMaxX = Math.max(preMaxX, minX + cm.getCurModel().getWidth());
 		}
 		
-		double result = downCms.size();
-		double overX = (double)(boardWidth-preMaxX) / boardWidth;
-		result += overX;
+		double result = boardWidth-preMaxX + ComposingGoalTest.BASE;
+		if(result < 0) {
+			result = 0;
+		}
 		
 		
 		//保存位置记录

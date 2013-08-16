@@ -12,6 +12,7 @@ import aima.core.search.local.Individual;
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
 
 public class ComposingGoalTest implements GoalTest {
+	public final static int BASE = 10000;
 	
 	public ComposingBoard board = null;
 	
@@ -27,7 +28,7 @@ public class ComposingGoalTest implements GoalTest {
 		}
 				
 		System.out.println(im.score + "\t" + im);
-		return im.score >= 28;
+		return im.score >= BASE;
 	}
 	
 	public static void showImage(BufferedImage img, String name) {
