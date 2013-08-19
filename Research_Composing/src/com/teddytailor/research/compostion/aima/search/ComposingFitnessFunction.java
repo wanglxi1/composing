@@ -43,19 +43,26 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		
 		List<ComposingModel> downCms = new ArrayList<ComposingModel>(cms.size());
 		int preMaxX = 0;
-		for(ComposingModel cm: cms) {
+		for(int i=0,imax=cms.size(); i<imax; i++) {
+			ComposingModel cm = cms.get(i);
 			if(preMaxX > boardWidth) {
 				preMaxX += cm.getCurModel().getWidth();
 				continue;
 			}
+			ComposingModel cmNext = null;
+			int iNext = i+1;
+			if(iNext < imax) {
+				cmNext = cms.get(iNext);
+			}
+			
+			
 			int minX;
 			
 			List<Byte> cacheHashCode = calcHashCode(ois, downCms);
 			Point cache = CacheManager.get(cacheHashCode);			
 			if(cache == null) {
-				cm.pos.y = 0;
-				cm.pos.x = preMaxX;
-				minX = orderDown(cm, downCms);
+//				cm.pos.y = 0; cm.pos.x = preMaxX;
+				minX = orderDown(cm, downCms, cmNext, preMaxX);
 				cm.pos.x = minX;
 				
 				CacheManager.put(cacheHashCode, cm.pos);
@@ -89,8 +96,10 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 	}
 	
 	private List<Byte> calcHashCode(List<OrderInteger> ois, List<ComposingModel> downCms) {
-		int size = downCms.size()+1;
+		int size = downCms.size()+2; 
 		if(size > CacheManager.MAX_CACHE_LIST_SIZE) {
+			return null;
+		}else if(size > ois.size()) {
 			return null;
 		}
 		
@@ -101,6 +110,58 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		return sb;
 	}
 
+	
+	private final static int MAX_COMPROMISE_SIZE = 5;
+	public int orderDown(ComposingModel cm, List<ComposingModel> downCms, ComposingModel cmNext, int preMaxX) {
+		int minX = orderDown(cm, downCms);
+		if(cmNext == null) return minX;
+		
+		//计算 当前模型 的y边界
+		int ry = board.getHeight()-cm.getCurModel().getHeight();
+		
+		//生成下个模型的downCms
+		List<ComposingModel> nDownCms = new ArrayList<ComposingModel>(downCms.size()+1);
+		nDownCms.addAll(downCms);
+		nDownCms.add(cm);
+		
+		//记录 当前 和下个 模型 最合适的 位置
+		int minY = cm.pos.y;
+		int nmx = Math.max(preMaxX, minX + cm.getCurModel().getHeight());
+		int nmy = 0;
+		
+		int nMinx = Integer.MAX_VALUE;
+		
+		for(int x=minX,xmax=minX+MAX_COMPROMISE_SIZE; x<=xmax; x++) {
+			cm.pos.x = x;
+			for(int y=0; y<=ry; y++) {
+				if(!isIntersect(cm, downCms, y)) {
+					cmNext.pos.x = nmx;
+					cmNext.pos.y = nmy;
+					
+					int tmpNMinX = orderDown(cmNext, nDownCms);
+					if(tmpNMinX < nMinx) {
+						nmx = nMinx = tmpNMinX;
+						nmy = cmNext.pos.y;
+						
+						//同时，更新当前模型的最小X
+						minX = x;
+						minY = y;
+					}
+				}
+			}
+		}
+		
+		nDownCms.clear(); nDownCms=null;
+		
+		cmNext.pos.x = nmx;
+		cmNext.pos.y = nmy;
+		
+		cm.pos.x = minX;
+		cm.pos.y = minY;
+		
+		return minX;
+	}
+	
 	
 	public int orderDown(ComposingModel cm, List<ComposingModel> downCms) {
 		int minX = cm.pos.x;

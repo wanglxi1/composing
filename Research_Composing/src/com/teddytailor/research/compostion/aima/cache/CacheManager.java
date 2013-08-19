@@ -70,6 +70,7 @@ public class CacheManager {
 	}
 	
 	public static void put(List<Byte> key, Point p) {
+		if(CACHE_CONTROL) return;
 		if(key==null) return;
 		if(!CACHE.containsKey(key)) {
 			CACHE.put(key, new Point(p));
