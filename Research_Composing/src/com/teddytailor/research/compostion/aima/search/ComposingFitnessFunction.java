@@ -90,6 +90,10 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 	
 	private List<Byte> calcHashCode(List<OrderInteger> ois, List<ComposingModel> downCms) {
 		int size = downCms.size()+1;
+		if(size > CacheManager.MAX_CACHE_LIST_SIZE) {
+			return null;
+		}
+		
 		List<Byte> sb = new ArrayList<Byte>(size);
 		for(OrderInteger oi: ois.subList(0, size)) {
 			sb.add(oi.toByte());
