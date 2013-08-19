@@ -17,9 +17,9 @@ import com.teddytailor.research.compostion.aima.data.ModelFactory;
 
 public class CacheManager {
 
-	public final static int MAX_CACHE_LIST_SIZE = 10;
+	public final static int MAX_CACHE_LIST_SIZE = 15;
 	
-	private final static ByteBuffer STRUCT = ByteBuffer.allocateDirect(1024);
+	private final static ByteBuffer STRUCT = ByteBuffer.allocateDirect(12+MAX_CACHE_LIST_SIZE);
 	private final static File FILE = new File(ModelFactory.RESOURCE, "cache");
 	private static FileChannel SYNC_CHANNEL = null;
 	
@@ -38,6 +38,21 @@ public class CacheManager {
 	}
 	
 	public static void main(String[] args) throws Exception{
+		compress();
+	}
+	
+	protected static void compress() throws Exception{
+		File wf = new File(ModelFactory.RESOURCE, "cachew");
+		FileChannel fc = new FileOutputStream(wf, true).getChannel();
+		for(Entry<List<Byte>, Point> entry: CACHE.entrySet()) {
+			List<Byte> key = entry.getKey();
+			if(key.size()<=MAX_CACHE_LIST_SIZE) {
+				writeFile(fc, key, entry.getValue());
+			}
+		}
+	}
+	
+	protected static void merge() throws Exception{
 		File nf = new File(ModelFactory.RESOURCE, "cache1");
 		readFile(nf);
 		File wf = new File(ModelFactory.RESOURCE, "cachew");
@@ -98,6 +113,12 @@ public class CacheManager {
 			long start = System.currentTimeMillis();
 			FileChannel fc = new FileInputStream(f).getChannel();
 			ByteBuffer buf = ByteBuffer.allocateDirect(12);
+			
+			List<ByteBuffer> bufs = new ArrayList<ByteBuffer>(MAX_CACHE_LIST_SIZE);
+			for(int i=1; i<=MAX_CACHE_LIST_SIZE; i++) {
+				bufs.add(ByteBuffer.allocateDirect(i));
+			}
+			
 			while(fc.read(buf) != -1) {
 				buf.flip();
 				int x = buf.getInt();
@@ -109,7 +130,7 @@ public class CacheManager {
 				if(len > MAX_CACHE_LIST_SIZE) {
 					fc.position(fc.position()+len);
 				}else {
-					ByteBuffer sbuf = ByteBuffer.allocateDirect(len);
+					ByteBuffer sbuf = bufs.get(len-1);
 					fc.read(sbuf);
 					sbuf.flip();
 					List<Byte> cs = new ArrayList<Byte>(len);
@@ -124,9 +145,12 @@ public class CacheManager {
 						CACHE.put(cs, p);
 					}
 					
-					sbuf = null;
+					sbuf.clear();
 				}
 			}
+			
+			buf = null;
+			bufs.clear();
 			
 			System.out.printf("use %s, read %s\n", System.currentTimeMillis()-start, CACHE.size());
 		} catch (Exception e) {
