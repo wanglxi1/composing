@@ -131,7 +131,7 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		
 		int nMinx = Integer.MAX_VALUE;
 		
-		for(int x=minX,xmax=minX+MAX_COMPROMISE_SIZE; x<=xmax; x++) {
+		for(int x=minX,xmax= Math.min(preMaxX, minX+MAX_COMPROMISE_SIZE); x<=xmax; x++) {
 			cm.pos.x = x;
 			for(int y=0; y<=ry; y++) {
 				if(!isIntersect(cm, downCms, y)) {
