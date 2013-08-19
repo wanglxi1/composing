@@ -46,6 +46,9 @@ public class Main {
 		if(args.length > 1) {
 			mutationProbability = Double.valueOf(args[1]);
 		}
+		if(args.length > 2) {
+			ComposingFitnessFunction.MAX_COMPROMISE_SIZE = Integer.valueOf(args[2]);
+		}
 		
 		List<ComposingModel> models = buildModels();
 		int modelLen = models.size();

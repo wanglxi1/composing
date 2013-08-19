@@ -15,7 +15,8 @@ import com.teddytailor.research.compostion.aima.data.ComposingModel;
 import com.teddytailor.research.compostion.aima.data.OrderInteger;
 
 public class ComposingFitnessFunction implements FitnessFunction<Integer> {
-
+	public static int MAX_COMPROMISE_SIZE = 3;
+	
 	private ComposingBoard board;
 	
 	private static Map<Integer, Double> VALUE_CACHE = new HashMap<Integer, Double>();//ConcurrentHashMap
@@ -109,9 +110,7 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		}
 		return sb;
 	}
-
 	
-	private final static int MAX_COMPROMISE_SIZE = 5;
 	public int orderDown(ComposingModel cm, List<ComposingModel> downCms, ComposingModel cmNext, int preMaxX) {
 		int minX = orderDown(cm, downCms);
 		if(cmNext == null) return minX;
