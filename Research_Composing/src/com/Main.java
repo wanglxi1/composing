@@ -37,17 +37,14 @@ public class Main {
 		long maxTimeMilliseconds = 0;
 //		maxTimeMilliseconds = 1000L * 60;
 		
-		double mutationProbability = 0.13;
-		int population_len = 33;
+		double mutationProbability = 0.9;
+		int population_len = 3;
 		
 		if(args.length > 0) {
 			population_len = Integer.valueOf(args[0]);
 		}
 		if(args.length > 1) {
 			mutationProbability = Double.valueOf(args[1]);
-		}
-		if(args.length > 2) {
-			ComposingFitnessFunction.MAX_COMPROMISE_SIZE = Integer.valueOf(args[2]);
 		}
 		
 		List<ComposingModel> models = buildModels();

@@ -15,8 +15,6 @@ import com.teddytailor.research.compostion.aima.data.ComposingModel;
 import com.teddytailor.research.compostion.aima.data.OrderInteger;
 
 public class ComposingFitnessFunction implements FitnessFunction<Integer> {
-	public static int MAX_COMPROMISE_SIZE = 3;
-	
 	private ComposingBoard board;
 	
 	private static Map<Integer, Double> VALUE_CACHE = new HashMap<Integer, Double>();//ConcurrentHashMap
@@ -37,6 +35,8 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		if(value != null) {
 			return value;
 		}
+		
+		long start = System.currentTimeMillis();
 		
 		int boardWidth = this.board.getWidth();
 		
@@ -62,7 +62,9 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 			List<Byte> cacheHashCode = calcHashCode(ois, downCms);
 			Point cache = CacheManager.get(cacheHashCode);			
 			if(cache == null) {
-//				cm.pos.y = 0; cm.pos.x = preMaxX;
+				cm.pos.y = 0; 
+				cm.pos.x = preMaxX;
+				
 				minX = orderDown(cm, downCms, cmNext, preMaxX);
 				cm.pos.x = minX;
 				
@@ -80,6 +82,8 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		if(result < 0) {
 			result = 0;
 		}
+		
+		System.out.println((System.currentTimeMillis()-start)/1000f);
 		
 		
 		//保存位置记录
@@ -112,11 +116,21 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 	}
 	
 	public int orderDown(ComposingModel cm, List<ComposingModel> downCms, ComposingModel cmNext, int preMaxX) {
-		int minX = orderDown(cm, downCms);
-		if(cmNext == null) return minX;
+		if(cmNext == null) return orderDown(cm, downCms);
 		
-		//计算 当前模型 的y边界
-		int ry = board.getHeight()-cm.getCurModel().getHeight();
+		int cmW = cm.getCurModel().getWidth();
+		
+		int boardH = this.board.getHeight();
+		int cmH = cm.getCurModel().getHeight();
+		int nextH = cmNext.getCurModel().getHeight();
+		
+		boolean needCareNext = 
+				cmH>=boardH/2 && cmH<boardH &&
+				nextH>=boardH/2 && nextH<boardH
+				;
+		if(!needCareNext) return orderDown(cm, downCms);
+		
+		long start = System.currentTimeMillis();
 		
 		//生成下个模型的downCms
 		List<ComposingModel> nDownCms = new ArrayList<ComposingModel>(downCms.size()+1);
@@ -124,32 +138,48 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		nDownCms.add(cm);
 		
 		//记录 当前 和下个 模型 最合适的 位置
+		int tMinx = Integer.MAX_VALUE;
+		
+		int minX = preMaxX;
 		int minY = cm.pos.y;
-		int nmx = Math.max(preMaxX, minX + cm.getCurModel().getHeight());
+		int nmx = Integer.MAX_VALUE;
 		int nmy = 0;
 		
-		int nMinx = Integer.MAX_VALUE;
-		
-		for(int x=minX,xmax= Math.min(preMaxX, minX+MAX_COMPROMISE_SIZE); x<=xmax; x++) {
-			cm.pos.x = x;
-			for(int y=0; y<=ry; y++) {
-				if(!isIntersect(cm, downCms, y)) {
-					cmNext.pos.x = nmx;
-					cmNext.pos.y = nmy;
+		int cyMax = boardH - cmH;
+		for(int cy=0; cy<=cyMax; cy++) {
+			for(int cx=preMaxX; cx>=0; cx--) {
+				cm.pos.x = cx;
+				
+				boolean isFind = (cx == 0);
+				if(!isFind && isIntersect(cm, downCms, cy)) {//相交的上一个则为边缘
+					isFind = true;
+					cm.pos.x = cx+1;
+				}
+				
+				if(isFind) {
+					cm.pos.y = cy;
 					
+					int cMaxX = cm.pos.x+cmW;
+					cmNext.pos.x = Math.max(preMaxX, cMaxX);
 					int tmpNMinX = orderDown(cmNext, nDownCms);
-					if(tmpNMinX < nMinx) {
-						nmx = nMinx = tmpNMinX;
+					int nMaxX = tmpNMinX + nextH;
+					
+					int maxX = Math.max(preMaxX, Math.max(nMaxX, nMaxX));
+					if(maxX < tMinx) {
+						tMinx = maxX;
+						nmx = tmpNMinX;
 						nmy = cmNext.pos.y;
 						
 						//同时，更新当前模型的最小X
-						minX = x;
-						minY = y;
+						minX = cx+1;
+						minY = cy;
 					}
+					
+					break;
 				}
 			}
 		}
-		
+				
 		nDownCms.clear(); nDownCms=null;
 		
 		cmNext.pos.x = nmx;
@@ -157,6 +187,8 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		
 		cm.pos.x = minX;
 		cm.pos.y = minY;
+		
+		System.out.printf("size: %d, use: %s\n", downCms.size(), (System.currentTimeMillis()-start)/1000F);
 		
 		return minX;
 	}
