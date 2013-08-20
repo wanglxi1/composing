@@ -10,6 +10,7 @@ import aima.core.search.framework.GoalTest;
 import aima.core.search.local.Individual;
 
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
+import com.teddytailor.research.compostion.aima.data.ModelFactory;
 
 public class ComposingGoalTest implements GoalTest {
 	public final static int BASE = 10000;
@@ -33,7 +34,7 @@ public class ComposingGoalTest implements GoalTest {
 	
 	public static void showImage(BufferedImage img, String name) {
 		try {
-			ImageIO.write(img, "jpg", new File("E:\\best_"+name+".jpg"));
+			ImageIO.write(img, "jpg", new File(ModelFactory.RESOURCE, "best_"+name+".jpg"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
