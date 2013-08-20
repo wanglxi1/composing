@@ -36,7 +36,7 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 			return value;
 		}
 		
-		long start = System.currentTimeMillis();
+//		long start = System.currentTimeMillis();
 		
 		int boardWidth = this.board.getWidth();
 		
@@ -83,7 +83,7 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 			result = 0;
 		}
 		
-		System.out.println((System.currentTimeMillis()-start)/1000f);
+//		System.out.println((System.currentTimeMillis()-start)/1000f);
 		
 		
 		//保存位置记录
@@ -130,7 +130,7 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 				;
 		if(!needCareNext) return orderDown(cm, downCms);
 		
-		long start = System.currentTimeMillis();
+//		long start = System.currentTimeMillis();
 		
 		//生成下个模型的downCms
 		List<ComposingModel> nDownCms = new ArrayList<ComposingModel>(downCms.size()+1);
@@ -188,7 +188,7 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		cm.pos.x = minX;
 		cm.pos.y = minY;
 		
-		System.out.printf("size: %d, use: %s\n", downCms.size(), (System.currentTimeMillis()-start)/1000F);
+//		System.out.printf("size: %d, use: %s\n", downCms.size(), (System.currentTimeMillis()-start)/1000F);
 		
 		return minX;
 	}
