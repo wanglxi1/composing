@@ -25,7 +25,7 @@ public class ComposingGoalTest implements GoalTest {
 			
 		if(best==null || im.score>best.score) {
 			best = im;
-			showImage(board.draw(im), best.score +"_"+ System.currentTimeMillis());
+			showImage(board.draw(im), best.score +"_"+ im.toString());
 		}
 				
 		System.out.println(im.score + "\t" + im);
@@ -34,7 +34,7 @@ public class ComposingGoalTest implements GoalTest {
 	
 	public static void showImage(BufferedImage img, String name) {
 		try {
-			ImageIO.write(img, "jpg", new File(ModelFactory.RESOURCE, "best_"+name+".jpg"));
+			ImageIO.write(img, "png", new File(ModelFactory.RESOURCE, name+".jpg"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
