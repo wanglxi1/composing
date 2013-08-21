@@ -14,27 +14,30 @@ import com.teddytailor.research.compostion.aima.data.ModelFactory;
 
 public class ComposingGoalTest implements GoalTest {
 	public final static int BASE = 10000;
+	private final static int MIN = BASE - 250;
+	public final static File BEST_DST = new File(ModelFactory.RESOURCE.getParentFile().getParentFile(), "best");
+	static { if(!BEST_DST.exists())  BEST_DST.mkdirs(); }
 	
 	public ComposingBoard board = null;
-	
 	public Individual<Integer> best = null;
 	
 	@Override
 	public boolean isGoalState(Object state) {
 		Individual<Integer> im = (Individual<Integer>)state;
-			
+		
+		System.out.println(im.score + "\t" + im);
+		if(im.score < MIN) return false;
+		
 		if(best==null || im.score>best.score) {
 			best = im;
 			showImage(board.draw(im), best.score +"_"+ im.toString());
 		}
-				
-		System.out.println(im.score + "\t" + im);
 		return im.score >= BASE;
 	}
 	
 	public static void showImage(BufferedImage img, String name) {
 		try {
-			ImageIO.write(img, "png", new File(ModelFactory.RESOURCE, name+".jpg"));
+			ImageIO.write(img, "png", new File(BEST_DST, name+".jpg"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
