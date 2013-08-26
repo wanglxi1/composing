@@ -14,7 +14,7 @@ import com.teddytailor.research.compostion.aima.data.ModelFactory;
 
 public class ComposingGoalTest implements GoalTest {
 	public final static int BASE = 10000;
-	private final static int MIN = BASE - 250;
+	private final static int MIN = BASE - 200;
 	public final static File BEST_DST = new File(ModelFactory.RESOURCE.getParentFile().getParentFile(), "best");
 	static { if(!BEST_DST.exists())  BEST_DST.mkdirs(); }
 	
@@ -30,7 +30,7 @@ public class ComposingGoalTest implements GoalTest {
 		
 		if(best==null || im.score>best.score) {
 			best = im;
-			showImage(board.draw(im), best.score +"_"+ im.toString());
+			showImage(board.draw(im), best.score +"_"+ ComposingBoard.orderIntegers(im).toString());
 		}
 		return im.score >= BASE;
 	}
