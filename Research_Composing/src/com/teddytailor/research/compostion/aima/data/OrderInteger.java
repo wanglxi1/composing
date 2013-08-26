@@ -49,7 +49,7 @@ public class OrderInteger{
 
 	@Override
 	public String toString() {
-		return (reversal?'T':'F')+""+origin;
+		return ""+origin*(reversal? -1: 1);
 	}
 	
 	
