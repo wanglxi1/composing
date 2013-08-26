@@ -25,12 +25,14 @@ public class ComposingGoalTest implements GoalTest {
 	public boolean isGoalState(Object state) {
 		Individual<Integer> im = (Individual<Integer>)state;
 		
-		System.out.println(im.score + "\t" + im);
+		String orderStr = ComposingBoard.orderIntegers(im).toString();
+		
+		System.out.println(im.score + "\t" + orderStr);
 		if(im.score < MIN) return false;
 		
 		if(best==null || im.score>best.score) {
 			best = im;
-			showImage(board.draw(im), best.score +"_"+ ComposingBoard.orderIntegers(im).toString());
+			showImage(board.draw(im), best.score +"_"+ orderStr);
 		}
 		return im.score >= BASE;
 	}
