@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import aima.core.search.framework.GoalTest;
 import aima.core.search.local.Individual;
 
+import com.Main;
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
 import com.teddytailor.research.compostion.aima.data.ModelFactory;
 
@@ -25,7 +26,7 @@ public class ComposingGoalTest implements GoalTest {
 	public boolean isGoalState(Object state) {
 		Individual<Integer> im = (Individual<Integer>)state;
 		
-		String orderStr = ComposingBoard.orderIntegers(im).toString();
+		String orderStr = Main.POPULATION_LEN + ComposingBoard.orderIntegers(im).toString();
 		
 		System.out.println(im.score + "\t" + orderStr);
 		if(im.score < MIN) return false;

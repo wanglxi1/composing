@@ -28,6 +28,8 @@ public class Main {
 	public static int COMPOSING_BOARD_WIDTH = 0;
 	public static int COMPOSING_BOARD_HEIGHT = 0;
 	
+	public static int POPULATION_LEN = 3; 
+	
 	
 	/**
 	 * @param args
@@ -38,10 +40,9 @@ public class Main {
 //		maxTimeMilliseconds = 1000L * 60;
 		
 		double mutationProbability = 0.9;
-		int population_len = 3;
 		
 		if(args.length > 0) {
-			population_len = Integer.valueOf(args[0]);
+			POPULATION_LEN = Integer.valueOf(args[0]);
 		}
 		if(args.length > 1) {
 			mutationProbability = Double.valueOf(args[1]);
@@ -63,7 +64,7 @@ public class Main {
 //		}
 		
 		Set<Individual<Integer>> population = new HashSet<Individual<Integer>>();
-		for(int i=0; i<population_len; i++) {
+		for(int i=0; i<POPULATION_LEN; i++) {
 			List<Integer> ls = new ArrayList<Integer>(modelLen);
 			for(int a=0,amax=modelLen; a<amax; a++) {
 				ls.add(finiteAlphabetBuilder.build(a*100));
