@@ -17,7 +17,7 @@ import com.teddytailor.research.compostion.aima.data.ModelFactory;
 
 public class CacheManager {
 
-	public final static int MAX_CACHE_LIST_SIZE = 50;
+	public final static int MAX_CACHE_LIST_SIZE = 20;
 	
 	private final static ByteBuffer STRUCT = ByteBuffer.allocateDirect(12+MAX_CACHE_LIST_SIZE);
 	private final static File FILE = new File(ModelFactory.RESOURCE, "cache");
