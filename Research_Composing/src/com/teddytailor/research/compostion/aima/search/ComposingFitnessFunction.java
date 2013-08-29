@@ -16,6 +16,8 @@ import com.teddytailor.research.compostion.aima.data.ComposingModel;
 import com.teddytailor.research.compostion.aima.data.OrderInteger;
 
 public class ComposingFitnessFunction implements FitnessFunction<Integer> {
+	public static boolean CARE_ALL_NEXT = false;
+	
 	private ComposingBoard board;
 	
 	private static Map<Integer, Double> VALUE_CACHE = new HashMap<Integer, Double>();//ConcurrentHashMap
@@ -130,10 +132,10 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 		int cmH = cm.getCurModel().getHeight();
 		int nextH = cmNext.getCurModel().getHeight();
 		
-		boolean needCareNext = 
+		boolean needCareNext = CARE_ALL_NEXT ||(
 				cmH>=boardH/2 && cmH<boardH &&
 				nextH>=boardH/2 && nextH<boardH
-				;
+			);
 		if(!needCareNext) return orderDown(cm, downCms);
 		
 //		long start = System.currentTimeMillis();
@@ -170,7 +172,7 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 					int tmpNMinX = orderDown(cmNext, nDownCms);
 					int nMaxX = tmpNMinX + nextH;
 					
-					int maxX = Math.max(preMaxX, Math.max(nMaxX, nMaxX));
+					int maxX = Math.max(preMaxX, Math.max(cMaxX, nMaxX));
 					if(maxX < tMinx) {
 						tMinx = maxX;
 						nmx = tmpNMinX;
