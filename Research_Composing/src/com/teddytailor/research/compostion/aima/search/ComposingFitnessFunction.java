@@ -9,6 +9,7 @@ import java.util.Map;
 import aima.core.search.local.FitnessFunction;
 import aima.core.search.local.Individual;
 
+import com.Main;
 import com.teddytailor.research.compostion.aima.cache.CacheManager;
 import com.teddytailor.research.compostion.aima.data.ComposingBoard;
 import com.teddytailor.research.compostion.aima.data.ComposingModel;
@@ -65,7 +66,12 @@ public class ComposingFitnessFunction implements FitnessFunction<Integer> {
 				cm.pos.y = 0; 
 				cm.pos.x = preMaxX;
 				
-				minX = orderDown(cm, downCms, cmNext, preMaxX);
+				if(Main.ORDER_DOWN_MODEL == 1) {
+					minX = orderDown(cm, downCms, cmNext, preMaxX);
+				}else {
+					minX = orderDown(cm, downCms);
+				}
+				
 				cm.pos.x = minX;
 				
 				CacheManager.put(cacheHashCode, cm.pos);

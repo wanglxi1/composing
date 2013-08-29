@@ -28,7 +28,7 @@ public class Main {
 	public static int COMPOSING_BOARD_WIDTH = 0;
 	public static int COMPOSING_BOARD_HEIGHT = 0;
 	
-	public static int POPULATION_LEN = 3; 
+	public static int ORDER_DOWN_MODEL = 1; 
 	
 	
 	/**
@@ -40,12 +40,16 @@ public class Main {
 //		maxTimeMilliseconds = 1000L * 60;
 		
 		double mutationProbability = 0.9;
+		int population_len = 3;
 		
-		if(args.length > 0) {
-			POPULATION_LEN = Integer.valueOf(args[0]);
+		if(args.length >= 1) {
+			population_len = Integer.valueOf(args[0]);
 		}
-		if(args.length > 1) {
+		if(args.length >= 2) {
 			mutationProbability = Double.valueOf(args[1]);
+		}
+		if(args.length >= 3) {
+			ORDER_DOWN_MODEL = Integer.valueOf(args[2]);
 		}
 		
 		List<ComposingModel> models = buildModels();
@@ -64,7 +68,7 @@ public class Main {
 //		}
 		
 		Set<Individual<Integer>> population = new HashSet<Individual<Integer>>();
-		for(int i=0; i<POPULATION_LEN; i++) {
+		for(int i=0; i<population_len; i++) {
 			List<Integer> ls = new ArrayList<Integer>(modelLen);
 			for(int a=0,amax=modelLen; a<amax; a++) {
 				ls.add(finiteAlphabetBuilder.build(a*100));

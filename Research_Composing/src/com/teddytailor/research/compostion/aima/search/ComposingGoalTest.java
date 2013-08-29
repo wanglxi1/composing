@@ -26,7 +26,7 @@ public class ComposingGoalTest implements GoalTest {
 	public boolean isGoalState(Object state) {
 		Individual<Integer> im = (Individual<Integer>)state;
 		
-		String orderStr = Main.POPULATION_LEN + ComposingBoard.orderIntegers(im).toString();
+		String orderStr = Main.ORDER_DOWN_MODEL + ComposingBoard.orderIntegers(im).toString();
 		
 		System.out.println(im.score + "\t" + orderStr);
 		if(im.score < MIN) return false;

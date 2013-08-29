@@ -2,6 +2,8 @@ package com.teddytailor.research.compostion;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import aima.core.search.local.Individual;
@@ -23,9 +25,9 @@ public class OrderDownTest {
 	}
 	
 	public static void main(String[] args) throws Exception{
-//		manTest();
+		manTest();
 //		showOrderName();
-		drawFoot();
+//		drawFoot();
 	}
 	
 	public static void drawFoot()  throws Exception{
@@ -91,27 +93,29 @@ public class OrderDownTest {
 	 * 1	鼻梁, 
 	 */
 	protected static void manTest() throws Exception{
-		int[] orders = {
-				5, 	3, 					//侧咀_右, 	侧咀_左,
-				260, 					//侧脸, 
-				180, -290, 				//内胳_右, 	内胳_左, 
-				140, 6, 					//堵头, 		堵头, 
-				160, 150, 				//外胳_右, 	外胳_左, 
-				190, 					//尾巴, 
-				191, 4, 					//手掌_右, 	手掌_左, 
-				210, 170,	9, -8, 			//耳, 		耳, 			耳, 			耳, 
-				7, 	200, -280, 			//脑_中, 	脑_后_右, 	脑_后_左, 
-				330,-330, -340, 340, 		//脚_右, 	脚_右, 		脚_左, 		脚_左, 
-				-120, -2, 				//脚掌, 		脚掌, 
-				-110, 1, 				//身体_右, 	身体_左, 
-				171						//鼻梁, 
+		int[] orderInts = {
+			23, 11, 19, -20, 13, -3, -24, 18, 4, -5, 15, -21, -1, -17, -10, 0, -25, -6, 14, -2, -12, 7, 27, -8, -9, -16, 22, 26
 		};
-		
-		List<Integer> is = new ArrayList<Integer>();
-		for(int i=0,imax=orders.length;i<imax;i++) {
-			is.add(orders[i]);
+		List<OrderInteger> oils = new ArrayList<OrderInteger>();
+		for(int i=0,imax=orderInts.length;i<imax;i++) {
+			int oi = orderInts[i];
+			int aoi = Math.abs(oi);
+			
+			int order = i*oi/aoi;
+			
+			oils.add(OrderInteger.valueOf(aoi, order));
 		}
-		Individual<Integer> individual = new Individual<Integer>(is);
+		Collections.sort(oils, new Comparator<OrderInteger>() {
+			@Override public int compare(OrderInteger o1, OrderInteger o2) {
+				return Integer.valueOf(o1.origin).compareTo(o2.origin);
+		}});
+		
+		List<Integer> ils = new ArrayList<Integer>(orderInts.length);
+		for(OrderInteger oi: oils) {
+			ils.add(oi.order);
+		}
+				
+		Individual<Integer> individual = new Individual<Integer>(ils);
 		List<ComposingModel> cms = Main.buildModels();
 		
 		show(individual, cms);

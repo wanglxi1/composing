@@ -30,7 +30,7 @@ public class OrderInteger{
 	}
 	
 	public byte toByte() {
-		return (byte)(this.origin* (this.reversal? -1: 1));
+		return (byte)((this.origin+1)* (this.reversal? -1: 1));
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class OrderInteger{
 
 	@Override
 	public String toString() {
-		return ""+origin*(reversal? -1: 1);
+		return ""+(origin+1)*(reversal? -1: 1);
 	}
 	
 	
