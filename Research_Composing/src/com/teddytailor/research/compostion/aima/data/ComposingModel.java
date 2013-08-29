@@ -8,8 +8,14 @@ public class ComposingModel implements Cloneable {
 	public String name = null;
 	public Point pos = new Point(0, 0);
 	public boolean reversal = false;
+	public int origin = 0;
 	
 	private Map<Boolean, Model> modelMap;
+	
+	public ComposingModel(Model m, boolean reversal) {
+		this.modelMap = new HashMap<Boolean, Model>();
+		this.modelMap.put(reversal, m);
+	}
 	
 	public ComposingModel(Model m) {
 		this.modelMap = new HashMap<Boolean, Model>();

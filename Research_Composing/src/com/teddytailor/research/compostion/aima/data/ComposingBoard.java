@@ -108,7 +108,7 @@ public class ComposingBoard {
 		return cms;
 	}
 	
-	private List<ComposingModel> orderPosModels(Individual<Integer> individual){
+	public List<ComposingModel> orderPosModels(Individual<Integer> individual){
 		List<OrderInteger> ois = orderIntegers(individual);
 		
 		int hashCode = ois.hashCode();
@@ -118,6 +118,7 @@ public class ComposingBoard {
 		List<ComposingModel> cms = new ArrayList<ComposingModel>(ois.size());
 		for(OrderInteger oi: ois) {
 			ComposingModel cm = this.models.get(oi.origin);
+			cm.origin = oi.origin;
 			if(posIterator.hasNext()) {
 				cm.pos = new Point(posIterator.next());
 			}else {
