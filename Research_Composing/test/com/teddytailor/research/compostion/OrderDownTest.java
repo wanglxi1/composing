@@ -16,12 +16,14 @@ import com.teddytailor.research.compostion.aima.data.OrderInteger;
 import com.teddytailor.research.compostion.aima.search.ComposingFitnessFunction;
 
 public class OrderDownTest {
-	static {
-		CacheManager.CACHE_CONTROL = true;
+	static {CacheManager.CACHE_CONTROL = false;}
+	
+	public static void showImage(BufferedImage img, String name) throws Exception {
+		javax.imageio.ImageIO.write(img, "png", new java.io.File("e:/"+name+".png"));
 	}
+	
 	public static void showImage(BufferedImage img) throws Exception {
 //		new com.teddytailor.research.ocr.util.ImageFrame().show(img);
-		javax.imageio.ImageIO.write(img, "png", new java.io.File("e:/1.png"));
 	}
 	
 	public static void main(String[] args) throws Exception{
@@ -78,33 +80,44 @@ public class OrderDownTest {
 	}
 	
 	/*
-	 * 2	侧咀_右, 侧咀_左,
-	 * 1	侧脸, 
-	 * 2	内胳_右, 内胳_左, 
-	 * 2	堵头, 堵头, 
-	 * 2	外胳_右, 外胳_左, 
-	 * 1	尾巴, 
-	 * 2	手掌_右, 手掌_左, 
-	 * 4	耳, 耳, 耳, 耳, 
-	 * 3	脑_中, 脑_后_右, 脑_后_左, 
-	 * 4	脚_右, 脚_右, 脚_左, 脚_左, 
-	 * 2	脚掌, 脚掌, 
-	 * 2	身体_右, 身体_左, 
-	 * 1	鼻梁, 
+	 * 2	侧咀_右, 侧咀_左,			1	2
+	 * 1	侧脸, 						3
+	 * 2	内胳_右, 内胳_左, 			4	5
+	 * 2	堵头, 堵头, 					6	7
+	 * 2	外胳_右, 外胳_左, 			8	9
+	 * 1	尾巴, 						10
+	 * 2	手掌_右, 手掌_左, 			11	12
+	 * 4	耳, 耳, 耳, 耳, 				13	14	15	16
+	 * 3	脑_中, 脑_后_右, 脑_后_左, 	17	18	19
+	 * 4	脚_右, 脚_右, 脚_左, 脚_左, 	20	21	22	23
+	 * 2	脚掌, 脚掌, 					24	25
+	 * 2	身体_右, 身体_左, 			26	27
+	 * 1	鼻梁, 						28
 	 */
 	protected static void manTest() throws Exception{
+		ComposingFitnessFunction.CARE_ALL_NEXT = false;
+		CacheManager.CACHE_CONTROL = false;
+		
+		Main.ORDER_DOWN_MODEL = 1;
+		boolean oldVer = false;
+		
+		//[9998.0] 20, -21, 14, -4, -25, 19, 5, -6, 16, -22, 23, -2, -18, -11, -1, 12, -26, -7, 15, -3, -13, 8, 28, -9, -10, -17, 24, -27
+		//[10011.0] [28, 20, -21, 14, -4, -25, 19, 5, -6, 16, -22, 23, -2, -18, -11, -1, 12, -26, -7, 15, -3, -13, 8, -9, -10, 17, 24, 27]
 		int[] orderInts = {
-			23, 11, 19, -20, 13, -3, -24, 18, 4, -5, 15, -21, -1, -17, -10, 0, -25, -6, 14, -2, -12, 7, 27, -8, -9, -16, 22, 26
+			28,20, -21, 14, -4, -25, 19, 5, 
+			-6, 16, -22, 23, -2, -18, -11, 
+			-1, 12, -26, -7, 15, -3, -13, 
+			8, -9, -10, 17, 24,   27
 		};
 		List<OrderInteger> oils = new ArrayList<OrderInteger>();
 		for(int i=0,imax=orderInts.length;i<imax;i++) {
 			int oi = orderInts[i];
-			int aoi = Math.abs(oi);
-			
-			int order = i*oi/aoi;
-			
+			int aoi = Math.abs(oi) + (oldVer? 0: -1);
+			int order = (i+1)*(oi<0? -1: 1);
 			oils.add(OrderInteger.valueOf(aoi, order));
 		}
+		System.out.println(oils.size() + oils.toString());
+		
 		Collections.sort(oils, new Comparator<OrderInteger>() {
 			@Override public int compare(OrderInteger o1, OrderInteger o2) {
 				return Integer.valueOf(o1.origin).compareTo(o2.origin);
@@ -112,13 +125,15 @@ public class OrderDownTest {
 		
 		List<Integer> ils = new ArrayList<Integer>(orderInts.length);
 		for(OrderInteger oi: oils) {
-			ils.add(oi.order);
+			ils.add(oi.toInt());
 		}
+		
+		System.out.println(ils.size() + ils.toString());
 				
 		Individual<Integer> individual = new Individual<Integer>(ils);
 		List<ComposingModel> cms = Main.buildModels();
 		
-		show(individual, cms);
+		show(individual, cms, true);
 	}
 	
 	
@@ -164,15 +179,24 @@ public class OrderDownTest {
 		show(individual, cms);
 	}
 
-
 	private static void show(Individual<Integer> individual, List<ComposingModel> cms) throws Exception {
-		ComposingBoard board = new ComposingBoard(cms, 2564, 436);
+		show(individual, cms, false);
+	}
+	private static void show(Individual<Integer> individual, List<ComposingModel> cms, boolean showName) throws Exception {
+		ComposingBoard board = new ComposingBoard(cms, 2564, 437);
 		ComposingFitnessFunction cff = new ComposingFitnessFunction(board);
 		double value = cff.getValue(individual);
 		
 		System.out.println(value);
 		
 		BufferedImage img = board.draw(individual);
-		showImage(img);
+		if(showName) {
+			List<OrderInteger> ois = ComposingBoard.orderIntegers(individual);
+			showImage(img, String.valueOf(value + ois.toString()));
+		}else {
+			showImage(img);
+		}
+		
 	}
+	
 }
