@@ -51,6 +51,13 @@ public class Main {
 		if(args.length >= 3) {
 			ORDER_DOWN_MODEL = Integer.valueOf(args[2]);
 		}
+		if(args.length >= 4) {
+			COMPOSING_BOARD_WIDTH = Integer.valueOf(args[3]);
+		}
+		if(args.length >= 5) {
+			ComposingGoalTest.MIN = Integer.valueOf(args[4]);
+		}
+		
 		
 		List<ComposingModel> models = buildModels();
 		int modelLen = models.size();
@@ -131,7 +138,7 @@ public class Main {
 			String numStr = fileName.substring(len-5, len-4);
 			int num = Integer.valueOf(numStr);
 			
-			if("鼻梁".equals(modelName)) {
+			if(COMPOSING_BOARD_WIDTH==0 && "鼻梁".equals(modelName)) {
 				COMPOSING_BOARD_WIDTH = m.getHeight() * 144 / 5;
 			}
 			

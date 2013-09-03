@@ -15,6 +15,7 @@ import com.teddytailor.research.compostion.aima.data.ModelFactory;
 
 public class ComposingGoalTest implements GoalTest {
 	public final static int BASE = 10000;
+	public static int MIN = BASE;
 	public final static File BEST_DST = new File(ModelFactory.RESOURCE.getParentFile().getParentFile(), "best");
 	static { if(!BEST_DST.exists())  BEST_DST.mkdirs(); }
 	
@@ -27,7 +28,7 @@ public class ComposingGoalTest implements GoalTest {
 		
 		String orderStr = Main.ORDER_DOWN_MODEL + ComposingBoard.orderIntegers(im).toString();
 		
-		if(im.score < BASE) return false;
+		if(im.score < MIN) return false;
 		
 		System.out.println(im.score + "\t" + orderStr);
 		
