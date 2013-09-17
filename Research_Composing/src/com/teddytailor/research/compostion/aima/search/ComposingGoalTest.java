@@ -3,6 +3,10 @@ package com.teddytailor.research.compostion.aima.search;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -46,5 +50,33 @@ public class ComposingGoalTest implements GoalTest {
 			e.printStackTrace();
 		}
 	}
-
+	
+	
+	private final static Pattern REGEX = Pattern.compile("([^_]+)_(\\d)+\\[([^\\]]+)\\]\\.jpg");
+	public static List<Individual<Integer>> getBestResults(int model, int needLen){
+		List<Individual<Integer>> result = new ArrayList<Individual<Integer>>();
+		
+		for(String fn: BEST_DST.list()) {
+			Matcher m = REGEX.matcher(fn);
+			if(m.find()) {
+				int curModel = Integer.valueOf(m.group(2));
+				if(curModel != model) continue;
+				
+				String order = m.group(3);
+				String[] orders = order.split(",");
+				List<Integer> ls = new ArrayList<Integer>(orders.length);
+				for(String s: orders) {
+					ls.add(Integer.valueOf(s.trim()));
+				}
+				result.add(new Individual<Integer>(ls));
+			}
+		}
+		
+		int havLen = result.size();
+		while(havLen > needLen) {
+			result.remove(--havLen);
+		}
+		return result;
+	}
+	
 }

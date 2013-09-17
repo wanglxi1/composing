@@ -74,14 +74,16 @@ public class Main {
 //			populations[j] = population;
 //		}
 		
-		Set<Individual<Integer>> population = new HashSet<Individual<Integer>>();
-		for(int i=0; i<population_len; i++) {
+		List<Individual<Integer>> bestPopulation = ComposingGoalTest.getBestResults(ORDER_DOWN_MODEL, population_len);
+		for(int i=bestPopulation.size(); i<population_len; i++) {
 			List<Integer> ls = new ArrayList<Integer>(modelLen);
 			for(int a=0,amax=modelLen; a<amax; a++) {
 				ls.add(finiteAlphabetBuilder.build(a*100));
 			}
-			population.add(new Individual<Integer>(ls));
+			bestPopulation.add(new Individual<Integer>(ls));
 		}
+		Set<Individual<Integer>> population = new HashSet<Individual<Integer>>(bestPopulation);
+		
 		
 		System.out.println("Init Finish.");
 		
